@@ -1,0 +1,248 @@
+<app-navbar></app-navbar>
+
+<div class="calculator-container">
+  <!-- Encabezado -->
+  <header class="calculator-header">
+    <span class="badge">Gestión Hídrica, Turnos y Aforo</span>
+    <h2>Calculadora de Turno, Caudal y Pago de Riego</h2>
+    <p>Determina los parámetros hidráulicos, el tiempo exacto de compuerta abierta y el costo total de la cuota de agua.</p>
+  </header>
+
+  <!-- Barra de Casos Frecuentes y Presets Rápidos -->
+  <div class="examples-card">
+    <span class="examples-title">💡 Casos Frecuentes de Riego (Carga en 1 Clic):</span>
+    <div class="btn-group-examples">
+      <button type="button" class="btn-example" (click)="cargarEjemplo('turno_chico')">
+        🌱 <strong>Parcela / Huerto Pequeño</strong>
+        <small>800 m³ // Acequia predial (n=0.025)</small>
+      </button>
+      <button type="button" class="btn-example" (click)="cargarEjemplo('riego_paltos')">
+        🥑 <strong>Frutales / Chacra (3.5 Ha)</strong>
+        <small>3.500 m³ // Canal estándar (n=0.015)</small>
+      </button>
+      <button type="button" class="btn-example" (click)="cargarEjemplo('llenado_tranque')">
+        🏗️ <strong>Llenado de Tranque Acumulador</strong>
+        <small>12.000 m³ // Canal matriz (n=0.014)</small>
+      </button>
+    </div>
+  </div>
+
+  <div class="calculator-grid">
+    <!-- Panel Izquierdo: Formulario Ergonómico -->
+    <div class="panel-card form-panel">
+      <h3>1. Medición del Canal en Terreno</h3>
+
+      <!-- Ajuste Rápido del Tirante (Regla de Compuerta) -->
+      <div class="field-highlight">
+        <label for="tirante">Altura de Agua en la Regla (Tirante y) [m]</label>
+        <div class="quick-input-group">
+          <button type="button" class="btn-step" (click)="ajustarTirante(-0.05)">- 5 cm</button>
+          <input type="number" id="tirante" step="0.01" [(ngModel)]="tirante" (input)="calcular()" name="tirante" required />
+          <button type="button" class="btn-step" (click)="ajustarTirante(0.05)">+ 5 cm</button>
+        </div>
+      </div>
+
+      <!-- Base y Pendiente en % -->
+      <div class="input-row">
+        <div class="input-group">
+          <label for="base">Ancho Solera (Base b) [m]</label>
+          <div class="stepper-input">
+            <button type="button" class="btn-mini" (click)="ajustarBase(-0.10)">-</button>
+            <input type="number" id="base" step="0.05" [(ngModel)]="base" (input)="calcular()" name="base" required />
+            <button type="button" class="btn-mini" (click)="ajustarBase(0.10)">+</button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="pendientePorc">Pendiente Longitudinal (S) [%]</label>
+          <input type="number" id="pendientePorc" step="0.01" [(ngModel)]="pendientePorc" (input)="calcular()" name="pendientePorc" placeholder="0.12" required />
+          <small class="helper-text">0.12% = 0.0012 m/m</small>
+        </div>
+      </div>
+
+      <!-- Material y Rugosidad -->
+      <div class="input-group">
+        <label for="rugosidad">Material y Estado del Canal (Manning n)</label>
+        <select id="rugosidad" [(ngModel)]="rugosidad" (change)="calcular()" name="rugosidad">
+          <option *ngFor="let r of rugosidades" [value]="r.value">{{ r.label }}</option>
+        </select>
+      </div>
+
+      <!-- Distancias -->
+      <div class="input-row">
+        <div class="input-group">
+          <label for="longitud">Longitud de Tramo [m]</label>
+          <input type="number" id="longitud" step="10" [(ngModel)]="longitud" (input)="calcular()" name="longitud" required />
+        </div>
+        <div class="input-group">
+          <label for="distanciaPredio">Distancia al Predio [m]</label>
+          <input type="number" id="distanciaPredio" step="50" [(ngModel)]="distanciaPredio" (input)="calcular()" name="distanciaPredio" required />
+        </div>
+      </div>
+
+      <h3 style="margin-top: 1.25rem;">2. Cuota de Riego y Tarifa</h3>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label for="volumenObjetivo">Volumen Asignado [m³]</label>
+          <input type="number" id="volumenObjetivo" step="100" [(ngModel)]="volumenObjetivo" (input)="calcular()" name="volumenObjetivo" required />
+        </div>
+        <div class="input-group">
+          <label for="tarifaPorM3">Tarifa del Agua [CLP $/m³]</label>
+          <input type="number" id="tarifaPorM3" step="1" [(ngModel)]="tarifaPorM3" (input)="calcular()" name="tarifaPorM3" required />
+        </div>
+      </div>
+
+      <!-- Diagnóstico de Régimen (Froude) -->
+      <div *ngIf="resultado" class="regimen-banner" [ngClass]="resultado.regimenTipo">
+        <div class="regimen-icon">
+          <span *ngIf="resultado.regimenTipo === 'subcritico'">🌊</span>
+          <span *ngIf="resultado.regimenTipo === 'critico'">⚠️</span>
+          <span *ngIf="resultado.regimenTipo === 'supercritico'">⚡</span>
+        </div>
+        <div class="regimen-text">
+          <strong>{{ resultado.regimen }}</strong>
+          <span>Número de Froude: Fr = {{ resultado.froude }} | Vel: {{ resultado.velocidad }} m/s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Resultados Operativos y de Ingeniería -->
+    <div class="panel-card result-panel">
+      <h3>Resumen Operativo del Turno</h3>
+      
+      <div *ngIf="resultado" class="hero-summary-grid">
+        <!-- 1. Tiempo de Compuerta Abierta -->
+        <div class="card-turn-time">
+          <span class="card-tag">⏱️ TIEMPO DE COMPUERTA ABIERTA</span>
+          <div class="time-display">
+            <span class="time-big">{{ resultado.tiempoHoras }}h {{ resultado.tiempoMinutos }}m</span>
+          </div>
+          <p class="time-desc">
+            Mantén la compuerta abierta durante <strong>{{ resultado.tiempoHoras }} horas y {{ resultado.tiempoMinutos }} minutos</strong> para recibir tus {{ resultado.volumenObjetivo | number }} m³.
+          </p>
+        </div>
+
+        <!-- 2. Tarjeta de Cobro y Transporte -->
+        <div class="card-turn-cost">
+          <div class="cost-item">
+            <span>💰 Total a Pagar por el Turno:</span>
+            <strong>${{ resultado.costoTurno | number }} CLP</strong>
+          </div>
+          <div class="cost-item sub">
+            <span>🌊 Caudal entregado en compuerta:</span>
+            <strong>{{ resultado.caudalLitros | number }} L/s ({{ resultado.caudal }} m³/s)</strong>
+          </div>
+          <div class="cost-item sub">
+            <span>⏳ Tiempo de viaje del agua al predio:</span>
+            <strong>≈ {{ resultado.tiempoLlegadaAguaMinutos }} minutos</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Parámetros Hidráulicos Complementarios -->
+      <h4 class="subtable-title">Detalle Técnico del Flujo</h4>
+      <div *ngIf="resultado" class="secondary-table">
+        <div class="sec-row">
+          <span>Área Hidráulica (A):</span>
+          <strong>{{ resultado.area }} m²</strong>
+        </div>
+        <div class="sec-row">
+          <span>Radio Hidráulico (Rh):</span>
+          <strong>{{ resultado.radioHidraulico }} m</strong>
+        </div>
+        <div class="sec-row">
+          <span>Perímetro Mojado (P):</span>
+          <strong>{{ resultado.perimetroMojado }} m</strong>
+        </div>
+        <div class="sec-row">
+          <span>Energía Específica (E):</span>
+          <strong>{{ resultado.energiaEspecifica }} m</strong>
+        </div>
+        <div class="sec-row">
+          <span>Volumen Almacenado en Tramo:</span>
+          <strong>{{ resultado.volumen }} m³</strong>
+        </div>
+        <div class="sec-row">
+          <span>Tiempo de Tránsito en Tramo (t):</span>
+          <strong>{{ resultado.tiempoTransito }} s</strong>
+        </div>
+      </div>
+
+      <div *ngIf="resultado" class="delivery-banner">
+        <span>💧 Volumen proyectado en 24h continuas: <strong>{{ resultado.volumenDiario | number }} m³ de agua</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Inferior: 4 Visualizaciones y Gráficos -->
+  <div class="visuals-grid">
+    <!-- Visual 1: Sección Transversal SVG -->
+    <div class="panel-card visual-card">
+      <div class="card-title-row">
+        <h3>Sección Transversal Geométrica</h3>
+        <span class="visual-tag">Corte Escala</span>
+      </div>
+      <div class="svg-wrapper">
+        <svg viewBox="0 0 340 180" class="cross-section-svg">
+          <!-- Solera del canal -->
+          <rect x="60" y="30" width="220" height="120" fill="#f8fafc" stroke="#4a5568" stroke-width="3" />
+          
+          <!-- Lámina de agua dinámica -->
+          <rect 
+            x="61.5" 
+            [attr.y]="150 - waterHeightSvg" 
+            width="217" 
+            [attr.height]="waterHeightSvg" 
+            fill="rgba(49, 130, 206, 0.45)" 
+            stroke="#2b6cb0" 
+            stroke-width="1.5" 
+          />
+
+          <!-- Cota Base (b) -->
+          <line x1="60" y1="162" x2="280" y2="162" stroke="#718096" stroke-width="1.5" />
+          <text x="170" y="174" font-size="11" text-anchor="middle" fill="#4a5568">b = {{ base }} m</text>
+
+          <!-- Cota Tirante (y) -->
+          <line x1="48" [attr.y1]="150 - waterHeightSvg" x2="48" y2="150" stroke="#2b6cb0" stroke-width="1.5" />
+          <text x="36" [attr.y]="150 - (waterHeightSvg / 2)" font-size="11" text-anchor="middle" fill="#2b6cb0" transform="rotate(-90 36 100)">
+            y = {{ tirante }} m ({{ tirante * 100 }} cm)
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Visual 2: Curva de Turno (Tiempo vs Tirante) -->
+    <div class="panel-card visual-card">
+      <div class="card-title-row">
+        <h3>Curva de Turno (Horas vs. Nivel de Agua)</h3>
+        <span class="visual-tag dot-orange">Tiempo de Pago</span>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas #timeCanvas width="350" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- Visual 3: Curva de Aforo (Q vs y) -->
+    <div class="panel-card visual-card">
+      <div class="card-title-row">
+        <h3>Curva de Aforo (Caudal vs. Tirante)</h3>
+        <span class="visual-tag dot-blue">Punto de Operación</span>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas #ratingCanvas width="350" height="180"></canvas>
+      </div>
+    </div>
+
+    <!-- Visual 4: Curva de Energía Específica (E vs y) -->
+    <div class="panel-card visual-card">
+      <div class="card-title-row">
+        <h3>Curva de Energía Específica (E vs. y)</h3>
+        <span class="visual-tag dot-teal">Comportamiento</span>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas #energyCanvas width="350" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+</div>

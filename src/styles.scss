@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #2d3748;
+  background-color: #ffffff;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &-primary {
+    background-color: #2b6cb0;
+    color: #ffffff;
+    &:hover { background-color: #1a4971; }
+  }
+
+  &-outline {
+    background-color: transparent;
+    border-color: #cbd5e0;
+    color: #2d3748;
+    &:hover { background-color: #f7fafc; border-color: #a0aec0; }
+  }
+
+  &-block {
+    width: 100%;
+  }
+
+  &-lg {
+    padding: 0.85rem 1.75rem;
+    font-size: 1rem;
+  }
+}
