@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // Pega tu enlace de MongoDB Atlas o usa el local entre comillas:
-const MONGODB_URI = 'mongodb+srv://tu_usuario:tu_password@cluster0.xxxxx.mongodb.net/flumen_db?retryWrites=true&w=majority';
+const MONGODB_URI = 'mongodb+srv://lucas:Lucasllet2@cluster0.k7munpk.mongodb.net/?appName=Cluster0;
 
 export async function connectDB() {
   try {
