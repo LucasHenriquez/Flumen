@@ -4,8 +4,8 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
-import { connectDB } from './server/db'; // 👈 1. Importa tu conexión
-import { User } from './server/models/Users'; // 👈 2. Importa tus modelos si los usas
+import { connectDB } from './server/db'; 
+import { User } from './server/models/Users'; 
 
 export function app(): express.Express {
   const server = express();
@@ -18,11 +18,11 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // 👈 3. Middleware para recibir JSON en las peticiones API
+  // Middleware para recibir JSON en las peticiones API
   server.use(express.json());
 
   // ==========================================
-  // 🚀 RUTAS DE LA API (Ejemplo para Login/Register)
+  // 🚀 RUTAS DE LA API (Login / Register)
   // ==========================================
   
   // Ruta de registro conectada a MongoDB
@@ -31,9 +31,9 @@ export function app(): express.Express {
       const { email, password } = req.body;
       const newUser = new User({ email, password });
       await newUser.save();
-      res.status(201).json({ message: 'Usuario registrado con éxito' });
+      return res.status(201).json({ message: 'Usuario registrado con éxito' });
     } catch (error: any) {
-      res.status(400).json({ error: error.message || 'Error al registrar usuario' });
+      return res.status(400).json({ error: error.message || 'Error al registrar usuario' });
     }
   });
 
@@ -45,16 +45,16 @@ export function app(): express.Express {
       if (!user) {
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
-      res.json({ message: 'Login exitoso', email: user.email });
+      return res.json({ message: 'Login exitoso', email: user.email });
     } catch (error) {
-      res.status(500).json({ error: 'Error en el servidor' });
+      return res.status(500).json({ error: 'Error en el servidor' });
     }
   });
 
   // ==========================================
   // RUTAS DE ANGULAR SSR
   // ==========================================
-  server.get('*', (req, res, next) => {
+  server.get('/*path', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     commonEngine
@@ -75,7 +75,7 @@ export function app(): express.Express {
 function run(): void {
   const port = process.env['PORT'] || 4000;
 
-  // 👈 4. Conectar a MongoDB antes de arrancar el servidor Express
+  // Conectar a MongoDB antes de arrancar el servidor Express
   connectDB().then(() => {
     const server = app();
     server.listen(port, () => {

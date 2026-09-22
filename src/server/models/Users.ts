@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
@@ -6,4 +6,5 @@ const userSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export const User = model('User', userSchema);
+// 👈 Verificamos si el modelo ya existe en 'models' antes de crearlo
+export const User = models['User'] || model('User', userSchema);
