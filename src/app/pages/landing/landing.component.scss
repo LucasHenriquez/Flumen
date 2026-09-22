@@ -1,0 +1,511 @@
+/* Paleta de Colores Agro-Tech */
+$agro-dark: #132e23;
+$agro-green: #1b4332;
+$agro-leaf: #2d6a4f;
+$agro-fresh: #40916c;
+$agro-mint: #d8f3dc;
+$water-blue: #0284c7;
+$water-light: #e0f2fe;
+$earth-bg: #f8faf9;
+$text-primary: #1c2d27;
+$text-muted: #52796f;
+$border-color: #d1e7dd;
+
+.landing-page {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: $text-primary;
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 3.5rem 1.5rem 4.5rem 1.5rem;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+
+  .hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: $agro-mint;
+  border: 1px solid #b7e4c7;
+  color: $agro-dark;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: 30px;
+  margin-bottom: 1.25rem;
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    background: $agro-leaf;
+    border-radius: 50%;
+  }
+}
+
+.hero-title {
+  font-size: 2.75rem;
+  line-height: 1.18;
+  color: $agro-dark;
+  margin: 0 0 1.25rem 0;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+
+  .gradient-text {
+    background: linear-gradient(135deg, $agro-leaf 0%, $water-blue 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: $text-muted;
+  margin: 0 0 2rem 0;
+  max-width: 560px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Botones con estilo Agro */
+.btn-agro {
+  background: $agro-green;
+  color: #ffffff;
+  padding: 0.85rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25);
+
+  &:hover {
+    background: $agro-dark;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 67, 50, 0.35);
+  }
+
+  .btn-arrow {
+    transition: transform 0.2s;
+  }
+  &:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+}
+
+.btn-outline-agro {
+  background: transparent;
+  border: 2px solid $agro-leaf;
+  color: $agro-leaf;
+  padding: 0.8rem 1.6rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $agro-mint;
+    color: $agro-dark;
+  }
+}
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  color: $text-muted;
+
+  .trust-icons {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* Hero Image & Floating Card */
+.hero-visual {
+  position: relative;
+
+  .hero-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -10px rgba(19, 46, 35, 0.2);
+    border: 3px solid #ffffff;
+
+    .hero-img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(19, 46, 35, 0.1) 0%, rgba(19, 46, 35, 0.4) 100%);
+    }
+  }
+
+  .floating-stat-card {
+    position: absolute;
+    bottom: -20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1.15rem 1.4rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e2e8f0;
+
+    .float-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: $agro-dark;
+      margin-bottom: 0.25rem;
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 6px #22c55e;
+      }
+    }
+
+    .float-time {
+      font-size: 2rem;
+      font-weight: 900;
+      color: $agro-green;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .float-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: #4a5568;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 0.4rem;
+
+      strong { color: $agro-dark; }
+    }
+  }
+}
+
+/* Metrics Bar */
+.metrics-bar {
+  background: $agro-dark;
+  color: white;
+  padding: 2.25rem 1.5rem;
+
+  .metrics-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .metric-num {
+    display: block;
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: #95d5b2;
+    margin-bottom: 0.2rem;
+  }
+
+  .metric-label {
+    font-size: 0.82rem;
+    color: #d8f3dc;
+  }
+}
+
+/* Galería de Casos de Uso */
+.use-cases-section {
+  padding: 5rem 1.5rem;
+  background: $earth-bg;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto 3rem auto;
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: $agro-leaf;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  h2 {
+    color: $agro-dark;
+    font-size: 2.1rem;
+    font-weight: 900;
+    margin: 0 0 0.75rem 0;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 0.98rem;
+    margin: 0;
+  }
+}
+
+.cards-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.gallery-card {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(19, 46, 35, 0.08);
+  }
+
+  .card-thumb {
+    position: relative;
+    height: 190px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(19, 46, 35, 0.85);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+    }
+  }
+
+  .card-content {
+    padding: 1.5rem;
+
+    h3 {
+      font-size: 1.15rem;
+      color: $agro-dark;
+      margin: 0 0 0.6rem 0;
+      font-weight: 800;
+    }
+
+    p {
+      color: #52796f;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+  }
+}
+
+/* Features Grid */
+.features-section {
+  padding: 5rem 1.5rem;
+  background: #ffffff;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.75rem;
+}
+
+.feature-card {
+  background: $earth-bg;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+
+  .feature-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    color: $agro-dark;
+    margin: 0 0 0.5rem 0;
+    font-weight: 800;
+  }
+
+  p {
+    font-size: 0.88rem;
+    color: $text-muted;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 2rem 1.5rem 5rem 1.5rem;
+
+  .cta-box {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, $agro-dark 0%, $agro-green 100%);
+    border-radius: 20px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    color: white;
+    box-shadow: 0 15px 35px rgba(19, 46, 35, 0.25);
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin: 0 0 0.75rem 0;
+  }
+
+  p {
+    font-size: 1.05rem;
+    color: $agro-mint;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+  }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-agro-solid {
+    background: #ffffff;
+    color: $agro-dark;
+    padding: 0.85rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background 0.2s;
+    &:hover { background: $agro-mint; }
+  }
+
+  .btn-agro-ghost {
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    padding: 0.8rem 1.7rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+    &:hover { background: rgba(255, 255, 255, 0.15); }
+  }
+}
+
+/* Footer */
+.landing-footer {
+  border-top: 1px solid $border-color;
+  padding: 3rem 1.5rem 1.5rem 1.5rem;
+  background: #ffffff;
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .brand-logo {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: $agro-dark;
+  }
+
+  .footer-brand p {
+    color: $text-muted;
+    font-size: 0.85rem;
+    margin: 0.35rem 0 0 0;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    a {
+      color: $text-muted;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      &:hover { color: $agro-leaf; }
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    border-top: 1px solid #edf2f7;
+    padding-top: 1.5rem;
+    font-size: 0.8rem;
+    color: $text-muted;
+  }
+}
+
+/* Responsividad */
+@media (max-width: 900px) {
+  .hero-section .hero-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero-subtitle { margin: 0 auto 2rem auto; }
+  .hero-actions { justify-content: center; }
+  .hero-trust { justify-content: center; }
+  .hero-visual .floating-stat-card {
+    position: static;
+    margin-top: 1rem;
+  }
+}
