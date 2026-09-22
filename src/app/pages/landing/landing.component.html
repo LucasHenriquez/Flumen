@@ -1,0 +1,214 @@
+<app-navbar></app-navbar>
+
+<div class="landing-page">
+  <!-- Hero Section con Fotografía Agrícola y Card Flotante -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Tecnología Hídrica para el Agro</span>
+        </div>
+        
+        <h1 class="hero-title">
+          Gestión de turnos, caudal y cobro de riego <span class="gradient-text">en el campo</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          Diseñado para agricultores, celadores y canalistas. Automatiza el aforo de canales rectangulares, calcula el tiempo exacto de compuerta abierta y optimiza cada metro cúbico de agua.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/calculadora" class="btn btn-agro btn-lg">
+            <span>Abrir Calculadora de Campo</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <a routerLink="/register" class="btn btn-outline-agro btn-lg">
+            Crear Cuenta Gratis
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="trust-icons">🌱 💧 🚜 🌾</div>
+          <span>Estandarizado con la fórmula de Manning para asociaciones de regantes.</span>
+        </div>
+      </div>
+
+      <!-- Hero Visual: Imagen de Terreno con Widget de Turno Superpuesto -->
+      <div class="hero-visual">
+        <div class="hero-image-wrapper">
+          <img 
+            src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=900&q=80" 
+            alt="Canales de riego y campos agrícolas" 
+            class="hero-img"
+          />
+          <div class="image-overlay"></div>
+          
+          <!-- Card Flotante de Turno en Terreno -->
+          <div class="floating-stat-card">
+            <div class="float-header">
+              <span class="live-dot"></span>
+              <strong>Turno Asignado — Parcela 12</strong>
+            </div>
+            <div class="float-time">03h 45m</div>
+            <div class="float-details">
+              <span>💧 Vol: <strong>2.500 m³</strong></span>
+              <span>💰 Pago: <strong>$45.000 CLP</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Métricas Clave de Eficiencia -->
+  <section class="metrics-bar">
+    <div class="metrics-container">
+      <div class="metric-item">
+        <span class="metric-num">0%</span>
+        <span class="metric-label">Error de cálculo manual</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-num">&lt; 10s</span>
+        <span class="metric-label">Tiempo de aforo en compuerta</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-num">100%</span>
+        <span class="metric-label">Funcionalidad offline en terreno</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-num">+30%</span>
+        <span class="metric-label">Eficiencia en entrega de agua</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Casos de Uso con Imágenes Reales del Agro -->
+  <section class="use-cases-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Aplicación en Terreno</span>
+        <h2>Soluciones prácticas para cada necesidad hídrica</h2>
+        <p>Herramientas diseñadas para operar con rapidez en la compuerta o en la administración del tranque.</p>
+      </div>
+
+      <div class="cards-gallery-grid">
+        <!-- Tarjeta 1 -->
+        <div class="gallery-card">
+          <div class="card-thumb">
+            <img 
+              src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=600&q=80" 
+              alt="Medición de agua en compuertas" 
+            />
+            <span class="thumb-badge">Celadores y Aforadores</span>
+          </div>
+          <div class="card-content">
+            <h3>Aforo Rápido en Compuerta</h3>
+            <p>Lee la regla graduada (tirante), ingresa los centímetros con un solo dedo y obtén el caudal en Litros/segundo al instante.</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="gallery-card">
+          <div class="card-thumb">
+            <img 
+              src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" 
+              alt="Riego en huertos de frutales" 
+            />
+            <span class="thumb-badge">Productores Agrícolas</span>
+          </div>
+          <div class="card-content">
+            <h3>Control de Turnos de Riego</h3>
+            <p>Calcula con exactitud a qué hora debes abrir y cerrar compuertas para recibir la cuota cúbica asignada a tu predio.</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="gallery-card">
+          <div class="card-thumb">
+            <img 
+              src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=600&q=80" 
+              alt="Tranques y canales matrices" 
+            />
+            <span class="thumb-badge">Asociaciones de Canalistas</span>
+          </div>
+          <div class="card-content">
+            <h3>Cobros y Cuotas Transparentes</h3>
+            <p>Valoriza el agua entregada según la tarifa comunitaria por m³, evitando conflictos y desacuerdos en la distribución.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Características Técnicas / Pilares -->
+  <section class="features-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Ingeniería & Funcionalidad</span>
+        <h2>Precisión técnica con interfaz intuitiva</h2>
+        <p>Toda la potencia de las fórmulas hidráulicas sin necesidad de planillas de cálculo complejas.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Cálculo Horas / Minutos</h3>
+          <p>Convierte metros cúbicos en tiempo exacto de apertura con diagnóstico de demora del flujo hacia el predio.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌊</div>
+          <h3>Fórmula de Manning Completa</h3>
+          <p>Cálculo de área mojada, radio hidráulico, velocidad del flujo y régimen mediante el número de Froude.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Curvas de Aforo y Corte Visual</h3>
+          <p>Gráficos interactivos de sección transversal del canal y curvas de comportamiento caudal vs. tirante.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📶</div>
+          <h3>Operatividad Offline</h3>
+          <p>Diseñado para funcionar sin interrupciones en zonas rurales sin cobertura de señal móvil.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Llamada a la Acción con Fondo de Campo -->
+  <section class="cta-section">
+    <div class="cta-container">
+      <div class="cta-box">
+        <div class="cta-content">
+          <h2>Moderniza la gestión de tus canales de riego</h2>
+          <p>Prueba la calculadora técnica de aforo ahora mismo o regístrate para llevar la trazabilidad de tus turnos.</p>
+          <div class="cta-actions">
+            <a routerLink="/calculadora" class="btn btn-agro-solid btn-lg">Probar Calculadora</a>
+            <a routerLink="/register" class="btn btn-agro-ghost btn-lg">Registrarse Gratis</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Institucional -->
+  <footer class="landing-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="brand-logo">🌱 FLUMEN</span>
+        <p>Ecosistema de cubicación hidráulica, aforo y gestión de turnos para la agricultura.</p>
+      </div>
+      <div class="footer-links">
+        <a routerLink="/calculadora">Calculadora</a>
+        <a routerLink="/login">Acceso Regantes</a>
+        <a routerLink="/register">Registro</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 FLUMEN — Gestión Eficiente y Sustentable del Agua de Riego.</p>
+    </div>
+  </footer>
+</div>
