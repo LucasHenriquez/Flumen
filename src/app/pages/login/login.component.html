@@ -1,0 +1,30 @@
+<form (ngSubmit)="onLogin()">
+
+  <div *ngIf="errorMessage" style="background-color: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; text-align: center;">
+    {{ errorMessage }}
+  </div>
+
+  <div class="form-group">
+    <label>Correo Electrónico</label>
+    <input 
+      type="email" 
+      [(ngModel)]="credentials.email" 
+      name="email" 
+      placeholder="nombre@ejemplo.cl" 
+      required />
+  </div>
+
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input 
+      type="password" 
+      [(ngModel)]="credentials.password" 
+      name="password" 
+      placeholder="••••••••" 
+      required />
+  </div>
+
+  <button type="button" class="btn-primary" (click)="onLogin()" [disabled]="loading">
+    {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+  </button>
+</form>

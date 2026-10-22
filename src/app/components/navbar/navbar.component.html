@@ -1,0 +1,39 @@
+<header class="navbar-header">
+  <div class="navbar-container">
+    <!-- Brand / Logotipo Oficial de Flumen -->
+    <a routerLink="/" class="brand-logo">
+      <img 
+        src="/media/logo-flumen.png" 
+        alt="Logo FLUMEN" 
+        class="navbar-logo-img"
+      />
+      <span class="logo-text">FLUMEN</span>
+    </a>
+
+    <!-- Enlaces Principales de Navegación -->
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a routerLink="/dashboard" routerLinkActive="active">Panel & Aforo</a>
+    </nav>
+
+    <!-- Acciones según estado de autenticación -->
+    <div class="nav-actions">
+      <!-- Si NO ha iniciado sesión -->
+      <ng-container *ngIf="!isLoggedIn">
+        <a routerLink="/login" routerLinkActive="active" class="btn-nav btn-outline">Iniciar Sesión</a>
+        <a routerLink="/register" routerLinkActive="active" class="btn-nav btn-primary">Crear Cuenta</a>
+      </ng-container>
+
+      <!-- Si YA inició sesión -->
+      <ng-container *ngIf="isLoggedIn">
+        <a routerLink="/dashboard" class="user-greeting-pill">
+          <span class="online-indicator"></span>
+          <span>{{ nombreUsuario }}</span>
+        </a>
+        <button type="button" class="btn-nav btn-logout-nav" (click)="cerrarSesion()">
+          Cerrar Sesión
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</header>
