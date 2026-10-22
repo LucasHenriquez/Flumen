@@ -1,13 +1,14 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -48,6 +49,9 @@ export class RegisterComponent {
         this.loading = false;
         this.successMessage = '✅ ¡Usuario guardado exitosamente en MongoDB!';
         console.log('✅ Usuario registrado:', res);
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1800);
       },
       error: (err: any) => {
         this.loading = false;
