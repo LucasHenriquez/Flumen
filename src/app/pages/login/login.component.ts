@@ -1,13 +1,14 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -18,6 +19,7 @@ export class LoginComponent {
   };
 
   errorMessage: string = '';
+  successMessage: string = '';
   loading: boolean = false;
 
   constructor(
@@ -38,6 +40,7 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.authService.login(this.credentials).subscribe({
       next: (res: any) => {

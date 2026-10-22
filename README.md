@@ -1,6 +1,10 @@
 <div align="center">
 
+<<<<<<< HEAD
   <img src="./media/logo-flumen.png" alt="FLUMEN Logo" width="140" />
+=======
+  <img src="src/media/watermarked_img_11164270051943637707.png" alt="FLUMEN Logo" width="140" />
+>>>>>>> origin/master
 
   # FLUMEN
   ### Sistema de Aforo Hidráulico y Gestión de Turnos de Riego
