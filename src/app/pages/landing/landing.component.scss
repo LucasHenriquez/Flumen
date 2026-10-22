@@ -1,23 +1,15 @@
 $c-dark: #0a0f0d;
 $c-agro: #1b4332;
 $c-leaf: #2d6a4f;
-$c-fresh: #40916c;
 $c-mint: #d8f3dc;
-$c-cyan: #38bdf8;
-$c-green-glow: #4ade80;
-$c-bg-light: #f8fafc;
 $c-border: #e2e8f0;
 
 :host {
   display: block;
   width: 100%;
-  overflow-x: clip;
 }
 
 .landing-corporate {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  color: #1e293b;
-  background: #ffffff;
   width: 100%;
   overflow-x: clip;
 }
@@ -31,16 +23,17 @@ $c-border: #e2e8f0;
 }
 
 /* ==========================================================
-   1. HERO VIDEO SECTION
+   1. HERO VIDEO (AJUSTE PERFECTO DEL VIDEO Y LOGO)
    ========================================================== */
 .hero-video-section {
   position: relative;
   width: 100%;
+  /* Usa dvh para evitar saltos de altura con la barra de navegación del navegador en móviles */
   min-height: calc(100dvh - 68px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(2rem, 5vh, 4rem) clamp(1rem, 3vw, 1.5rem);
+  padding: clamp(2.5rem, 6vh, 4.5rem) 1rem;
   background: #000000;
   overflow: hidden;
   box-sizing: border-box;
@@ -55,8 +48,9 @@ $c-border: #e2e8f0;
     .bg-video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      opacity: 0.55;
+      object-fit: cover; /* Asegura cobertura total sin estirarse */
+      object-position: center;
+      opacity: 0.5;
     }
 
     .video-overlay {
@@ -65,7 +59,7 @@ $c-border: #e2e8f0;
       background: radial-gradient(
         circle at center,
         rgba(0, 0, 0, 0.45) 0%,
-        rgba(10, 15, 13, 0.85) 100%
+        rgba(10, 15, 13, 0.88) 100%
       );
     }
   }
@@ -74,24 +68,23 @@ $c-border: #e2e8f0;
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 780px;
+    max-width: 820px;
     margin: 0 auto;
-    box-sizing: border-box;
   }
 
   .hero-center-box {
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
     width: 100%;
   }
 }
 
+/* Escalado dinámico del logotipo */
 .hero-logo-showcase {
   width: 100%;
-  max-width: clamp(200px, 35vw, 340px);
+  max-width: clamp(210px, 36vw, 360px);
   margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
   display: flex;
   justify-content: center;
@@ -100,87 +93,72 @@ $c-border: #e2e8f0;
   .hero-logo-main {
     width: 100%;
     height: auto;
-    max-height: clamp(180px, 35vh, 300px);
+    max-height: clamp(140px, 28vh, 260px);
     object-fit: contain;
-    filter: brightness(1.3)
-            contrast(1.15)
-            drop-shadow(0 0 25px rgba(45, 106, 79, 0.75))
-            drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.02);
-    }
+    filter: brightness(1.25)
+            drop-shadow(0 0 25px rgba(45, 106, 79, 0.7))
+            drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
   }
 }
 
 .hero-tagline {
-  font-size: clamp(1rem, 2.2vw, 1.25rem);
-  line-height: 1.45;
-  color: #f1f5f9;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  line-height: 1.5;
+  color: #f8fafc;
   font-weight: 500;
   margin: 0 0 clamp(1.25rem, 3vh, 2rem) 0;
-  max-width: 560px;
+  max-width: 580px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
   padding: 0 0.5rem;
-  box-sizing: border-box;
 }
 
+/* Grupo de botones que se adapta en móviles */
 .hero-cta-group {
   display: flex;
   gap: 1rem;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 520px;
-  padding: 0 1rem;
-  box-sizing: border-box;
-}
+  max-width: 540px;
 
-.btn-agro-primary,
-.btn-agro-glass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  height: 50px;
-  padding: 0 1.6rem;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-decoration: none;
-  box-sizing: border-box;
-  transition: all 0.25s ease;
-  white-space: nowrap;
-}
-
-.btn-agro-primary {
-  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
-  color: #ffffff;
-  border: 1px solid #52b788;
-  box-shadow: 0 4px 18px rgba(74, 222, 128, 0.35);
-
-  .svg-arrow {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 48px;
+    padding: 0 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
   }
 
-  &:hover .svg-arrow {
-    transform: translateX(4px);
+  .btn-agro-primary {
+    background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+    color: #ffffff;
+    border: 1px solid #52b788;
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
+
+    &:hover .svg-arrow {
+      transform: translateX(4px);
+    }
+    .svg-arrow {
+      transition: transform 0.2s ease;
+    }
   }
-}
 
-.btn-agro-glass {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-  backdrop-filter: blur(8px);
+  .btn-agro-glass {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: #ffffff;
+    &:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #ffffff;
+    }
   }
 }
 
@@ -190,12 +168,12 @@ $c-border: #e2e8f0;
 .kpi-banner {
   background: #ffffff;
   border-bottom: 1px solid $c-border;
-  padding: clamp(1.75rem, 4vh, 2.75rem) 0;
+  padding: clamp(1.5rem, 3.5vh, 2.5rem) 0;
 
   .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: clamp(1rem, 2.5vw, 2rem);
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.25rem;
   }
 
   .kpi-box {
@@ -203,11 +181,10 @@ $c-border: #e2e8f0;
     align-items: center;
     gap: 1rem;
     padding: 0.5rem;
-    box-sizing: border-box;
 
     .kpi-icon-wrap {
-      width: clamp(42px, 8vw, 50px);
-      height: clamp(42px, 8vw, 50px);
+      width: 46px;
+      height: 46px;
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
       border-radius: 10px;
@@ -216,11 +193,7 @@ $c-border: #e2e8f0;
       justify-content: center;
       flex-shrink: 0;
 
-      svg {
-        width: clamp(20px, 4vw, 24px);
-        height: clamp(20px, 4vw, 24px);
-        color: $c-leaf;
-      }
+      svg { color: $c-leaf; }
     }
 
     .kpi-data {
@@ -228,55 +201,54 @@ $c-border: #e2e8f0;
       flex-direction: column;
 
       .kpi-val {
-        font-size: clamp(1.5rem, 3.5vw, 1.95rem);
+        font-size: clamp(1.4rem, 2.8vw, 1.85rem);
         font-weight: 900;
         color: $c-agro;
         line-height: 1.1;
       }
       .kpi-lbl {
-        font-size: clamp(0.75rem, 1.6vw, 0.82rem);
+        font-size: 0.8rem;
         color: #64748b;
-        margin-top: 0.15rem;
+        margin-top: 0.2rem;
       }
     }
   }
 }
 
 /* ==========================================================
-   3. PILARES ESTRATÉGICOS
+   3. PILARES & SECCIONES GENERALES
    ========================================================== */
 .pillars-section {
-  padding: clamp(3rem, 6vh, 5.5rem) 0;
-  background: $c-bg-light;
+  padding: clamp(2.5rem, 5vh, 4.5rem) 0;
+  background: #f8fafc;
 }
 
 .section-title-wrap {
   text-align: center;
   max-width: 680px;
-  margin: 0 auto clamp(2rem, 4vh, 3.25rem) auto;
+  margin: 0 auto clamp(2rem, 3.5vh, 3rem) auto;
 
   .section-tag {
     font-size: 0.78rem;
     font-weight: 800;
     text-transform: uppercase;
     color: $c-leaf;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     display: block;
-    margin-bottom: 0.5rem;
-
+    margin-bottom: 0.4rem;
     &.text-mint { color: #95d5b2; }
   }
 
   h2 {
-    font-size: clamp(1.5rem, 3.5vw, 2.15rem);
+    font-size: clamp(1.4rem, 2.6vw, 2.1rem);
     font-weight: 900;
     color: $c-dark;
-    line-height: 1.2;
-    margin: 0 0 0.65rem 0;
+    line-height: 1.25;
+    margin: 0 0 0.5rem 0;
   }
 
   p {
-    font-size: clamp(0.88rem, 1.8vw, 1rem);
+    font-size: clamp(0.88rem, 1.4vw, 0.98rem);
     color: #64748b;
     margin: 0;
   }
@@ -290,61 +262,58 @@ $c-border: #e2e8f0;
 .pillars-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(1.2rem, 2.5vw, 2rem);
+  gap: 1.5rem;
 }
 
 .pillar-card {
   background: #ffffff;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   border: 1px solid $c-border;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
 
   .pillar-img-wrap {
     position: relative;
-    height: clamp(160px, 25vw, 190px);
+    height: 180px;
     width: 100%;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
     .pillar-badge {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(11, 29, 22, 0.85);
+      top: 10px;
+      left: 10px;
+      background: rgba(10, 15, 13, 0.85);
       backdrop-filter: blur(4px);
       color: #ffffff;
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 20px;
+      padding: 0.25rem 0.65rem;
+      border-radius: 16px;
     }
   }
 
   .pillar-body {
-    padding: clamp(1.2rem, 2.5vw, 1.6rem);
+    padding: 1.4rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 
     h3 {
-      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      font-size: 1.15rem;
       color: $c-dark;
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 0.45rem 0;
       font-weight: 800;
     }
-
     p {
       color: #64748b;
-      font-size: clamp(0.85rem, 1.6vw, 0.92rem);
-      line-height: 1.55;
+      font-size: 0.9rem;
+      line-height: 1.5;
       margin: 0;
     }
   }
@@ -354,7 +323,7 @@ $c-border: #e2e8f0;
    4. WORKFLOW SECTION
    ========================================================== */
 .workflow-section {
-  padding: clamp(3rem, 6vh, 5.5rem) 0;
+  padding: clamp(2.5rem, 5vh, 4.5rem) 0;
   background: $c-agro;
   color: white;
 
@@ -371,35 +340,34 @@ $c-border: #e2e8f0;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
-    padding: clamp(1.4rem, 2.5vw, 1.8rem) 1.25rem;
+    padding: 1.5rem 1.2rem;
     text-align: center;
-    box-sizing: border-box;
 
     .step-num {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       background: #52b788;
       color: $c-dark;
       font-weight: 900;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1rem auto;
+      margin: 0 auto 0.8rem auto;
     }
 
     h4 {
-      font-size: clamp(1.05rem, 2vw, 1.15rem);
+      font-size: 1.1rem;
       font-weight: 800;
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 0.4rem 0;
       color: #ffffff;
     }
 
     p {
       font-size: 0.88rem;
       color: #d1d5db;
-      line-height: 1.5;
+      line-height: 1.45;
       margin: 0;
     }
   }
@@ -408,12 +376,7 @@ $c-border: #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    svg {
-      width: 24px;
-      height: 24px;
-      color: #95d5b2;
-    }
+    svg { color: #95d5b2; }
   }
 }
 
@@ -421,29 +384,28 @@ $c-border: #e2e8f0;
    5. CTA EMPRESARIAL
    ========================================================== */
 .cta-corporate-section {
-  padding: clamp(2.5rem, 5vh, 4.5rem) 0;
+  padding: clamp(2rem, 4vh, 3.5rem) 0;
 
   .cta-inner-card {
     background: linear-gradient(135deg, $c-dark 0%, $c-agro 100%);
     border-radius: 16px;
-    padding: clamp(2rem, 4vw, 3.25rem) clamp(1.25rem, 3vw, 2.25rem);
+    padding: clamp(1.75rem, 3.5vw, 3rem) clamp(1.25rem, 3vw, 2.5rem);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1.75rem;
-    box-sizing: border-box;
+    gap: 1.5rem;
 
     .cta-text {
       max-width: 580px;
 
       h2 {
-        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-size: clamp(1.35rem, 2.5vw, 1.9rem);
         font-weight: 900;
         color: #ffffff;
-        margin: 0 0 0.65rem 0;
+        margin: 0 0 0.5rem 0;
       }
       p {
-        font-size: clamp(0.88rem, 1.8vw, 1rem);
+        font-size: clamp(0.85rem, 1.4vw, 0.95rem);
         color: #d8f3dc;
         margin: 0;
       }
@@ -452,54 +414,48 @@ $c-border: #e2e8f0;
     .cta-buttons {
       display: flex;
       gap: 0.85rem;
-      flex-shrink: 0;
       flex-wrap: wrap;
+      flex-shrink: 0;
+
+      .btn-agro-solid {
+        background: #ffffff;
+        color: $c-dark;
+        padding: 0.75rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.92rem;
+        text-decoration: none;
+        &:hover { background: #d8f3dc; }
+      }
+
+      .btn-agro-outline-light {
+        background: transparent;
+        border: 1.5px solid #ffffff;
+        color: #ffffff;
+        padding: 0.75rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none;
+        &:hover { background: rgba(255, 255, 255, 0.15); }
+      }
     }
-  }
-
-  .btn-agro-solid {
-    background: #ffffff;
-    color: $c-dark;
-    padding: 0.85rem 1.6rem;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 0.95rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    &:hover { background: #d8f3dc; }
-  }
-
-  .btn-agro-outline-light {
-    background: transparent;
-    border: 1.5px solid #ffffff;
-    color: #ffffff;
-    padding: 0.85rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    &:hover { background: rgba(255, 255, 255, 0.15); }
   }
 }
 
 /* ==========================================================
-   6. FOOTER INSTITUCIONAL
+   6. FOOTER
    ========================================================== */
 .corporate-footer {
   background: #ffffff;
   border-top: 1px solid $c-border;
-  padding: clamp(2.5rem, 4vh, 3.5rem) 0 1.75rem 0;
+  padding: 3rem 0 1.5rem 0;
 
   .footer-main-row {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
-    margin-bottom: 2.25rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
   }
 
   .footer-brand-col {
@@ -510,7 +466,7 @@ $c-border: #e2e8f0;
       margin-bottom: 0.75rem;
 
       .footer-logo-img {
-        height: 38px;
+        height: 34px;
         width: auto;
         object-fit: contain;
       }
@@ -524,8 +480,8 @@ $c-border: #e2e8f0;
 
     .brand-desc {
       color: #64748b;
-      font-size: 0.88rem;
-      line-height: 1.55;
+      font-size: 0.85rem;
+      line-height: 1.5;
       max-width: 380px;
       margin: 0;
     }
@@ -534,35 +490,30 @@ $c-border: #e2e8f0;
   .footer-nav-col {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.5rem;
 
     .col-title {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
       color: $c-dark;
       margin-bottom: 0.25rem;
     }
 
     a, span {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: #64748b;
       text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: $c-leaf;
+      &:hover { color: $c-leaf; }
     }
   }
 
   .footer-bottom-row {
     border-top: 1px solid $c-border;
-    padding-top: 1.5rem;
+    padding-top: 1.25rem;
     display: flex;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: #94a3b8;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -570,53 +521,26 @@ $c-border: #e2e8f0;
 }
 
 /* ==========================================================
-   ANIMACIONES
-   ========================================================== */
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==========================================================
-   RESPONSIVIDAD MÓVIL (< 768px)
+   ADAPTACIONES PARA MÓVILES (< 768px)
    ========================================================== */
 @media (max-width: 768px) {
   .hero-video-section {
-    min-height: auto;
-    padding: 3rem 1rem 3.5rem 1rem;
+    padding: 2.5rem 1rem 3rem 1rem;
   }
 
   .hero-cta-group {
     flex-direction: column;
-    gap: 0.85rem;
     width: 100%;
-    max-width: 340px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    max-width: 320px;
 
-    .btn-agro-primary,
-    .btn-agro-glass {
+    .btn {
       width: 100%;
-      height: 48px;
-      font-size: 0.92rem;
-      white-space: normal;
-      text-align: center;
+      height: 46px;
     }
   }
 
   .kpi-banner .kpi-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 0.85rem;
   }
 
   .workflow-section .workflow-cards {
@@ -656,7 +580,6 @@ $c-border: #e2e8f0;
     .footer-bottom-row {
       flex-direction: column;
       text-align: center;
-      gap: 0.35rem;
     }
   }
 }

@@ -1,24 +1,24 @@
 <app-navbar></app-navbar>
 
 <div class="landing-corporate">
-  <!-- 1. HERO CON VIDEO DE FONDO Y LOGOTIPO -->
+  <!-- 1. HERO SECTION RESPONSIVA -->
   <section class="hero-video-section">
     <div class="video-container">
       <video autoplay [muted]="true" loop playsinline preload="auto" class="bg-video">
-        <source src="videos/flumen-hero-landing-page.mp4" type="video/mp4">
         <source src="/videos/flumen-hero-landing-page.mp4" type="video/mp4">
+        <source src="videos/flumen-hero-landing-page.mp4" type="video/mp4">
       </video>
       <div class="video-overlay"></div>
     </div>
 
     <div class="hero-content-wrapper">
       <div class="hero-center-box animate-fade-in-up">
-        <!-- Contenedor del Logo con fallback automático -->
+        <!-- Logo con contenedor flexible que escala según la pantalla -->
         <div class="hero-logo-showcase">
           <img 
             src="/media/logo-flumen.png" 
             alt="Logo FLUMEN" 
-            class="navbar-logo-img"
+            class="hero-logo-main"
           />
         </div>
 
@@ -110,7 +110,7 @@
       <div class="pillars-grid">
         <div class="pillar-card">
           <div class="pillar-img-wrap">
-            <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=600&q=80" alt="Aforo de compuertas">
+            <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=600&q=80" alt="Aforo de compuertas" loading="lazy">
             <span class="pillar-badge">En Compuerta</span>
           </div>
           <div class="pillar-body">
@@ -121,7 +121,7 @@
 
         <div class="pillar-card">
           <div class="pillar-img-wrap">
-            <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" alt="Riego en huertos">
+            <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" alt="Riego en huertos" loading="lazy">
             <span class="pillar-badge">Para el Agricultor</span>
           </div>
           <div class="pillar-body">
@@ -132,7 +132,7 @@
 
         <div class="pillar-card">
           <div class="pillar-img-wrap">
-            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=600&q=80" alt="Infraestructura hídrica">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=600&q=80" alt="Infraestructura hídrica" loading="lazy">
             <span class="pillar-badge">Para Canalistas y OUA</span>
           </div>
           <div class="pillar-body">
@@ -210,10 +210,9 @@
         <div class="footer-brand-col">
           <div class="footer-logo">
             <img 
-              src="media/logo-flumen.png" 
+              src="/media/logo-flumen.png" 
               alt="FLUMEN Logo" 
               class="footer-logo-img"
-              onerror="this.onerror=null; this.src='/media/logo-flumen.png';"
             />
             <span class="logo-name">FLUMEN</span>
           </div>
