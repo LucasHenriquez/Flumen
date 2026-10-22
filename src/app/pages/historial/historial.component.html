@@ -1,0 +1,58 @@
+<app-navbar></app-navbar>
+
+<div style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem;">
+  <header style="margin-bottom: 2rem; text-align: center;">
+    <h2 style="font-size: 2rem; color: #1a202c; margin-bottom: 0.5rem;">Historial de Aforos y Mediciones</h2>
+    <p style="color: #4a5568;">Registro en tiempo real de los aforos almacenados en la base de datos de FLUMEN.</p>
+  </header>
+
+  <!-- Indicador de Carga -->
+  <div *ngIf="cargando" style="text-align: center; padding: 3rem; font-weight: bold; color: #2b6cb0;">
+    🔄 Cargando historial desde MongoDB...
+  </div>
+
+  <!-- Mensaje de Error -->
+  <div *ngIf="errorMensaje" style="background-color: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 1.5rem;">
+    {{ errorMensaje }}
+  </div>
+
+  <!-- Tabla de Resultados -->
+  <div *ngIf="!cargando && historial.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="background-color: #f7fafc; border-bottom: 2px solid #e2e8f0; color: #4a5568; font-size: 0.9rem;">
+          <th style="padding: 12px 16px;">Fecha</th>
+          <th style="padding: 12px 16px;">Canal</th>
+          <th style="padding: 12px 16px;">Base (b)</th>
+          <th style="padding: 12px 16px;">Tirante (y)</th>
+          <th style="padding: 12px 16px;">Caudal (L/s)</th>
+          <th style="padding: 12px 16px;">Velocidad</th>
+          <th style="padding: 12px 16px;">Régimen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of historial" style="border-bottom: 1px solid #e2e8f0; font-size: 0.95rem;">
+          <td style="padding: 12px 16px;">{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td style="padding: 12px 16px; font-weight: 600; color: #2b6cb0;">{{ item.nombreCanal || 'Canal Principal' }}</td>
+          <td style="padding: 12px 16px;">{{ item.anchoSolera }} m</td>
+          <td style="padding: 12px 16px;">{{ item.tiranteAgua }} m</td>
+          <td style="padding: 12px 16px; font-weight: bold; color: #2d3748;">{{ item.caudalLS }} L/s</td>
+          <td style="padding: 12px 16px;">{{ item.velocidad }} m/s</td>
+          <td style="padding: 12px 16px;">
+            <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; background-color: #e6fffa; color: #234e52;">
+              {{ item.regimenFlujo }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sin Registros -->
+  <div *ngIf="!cargando && historial.length === 0 && !errorMensaje" style="text-align: center; padding: 3rem; background: #f7fafc; border-radius: 8px;">
+    <p style="color: #718096; font-size: 1.1rem; margin-bottom: 1rem;">Aún no hay mediciones registradas en la base de datos.</p>
+    <a routerLink="/calculadora" style="display: inline-block; background-color: #2b6cb0; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+      Ir a la Calculadora
+    </a>
+  </div>
+</div>

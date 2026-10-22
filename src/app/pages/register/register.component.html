@@ -1,0 +1,41 @@
+<form (ngSubmit)="onRegister()">
+
+  <!-- Cartel de éxito si se guardó -->
+  <div *ngIf="successMessage" style="background-color: #dcfce7; color: #15803d; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; text-align: center;">
+    {{ successMessage }}
+  </div>
+
+  <!-- Cartel de error si algo falló -->
+  <div *ngIf="errorMessage" style="background-color: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; text-align: center;">
+    {{ errorMessage }}
+  </div>
+
+  <div class="form-group">
+    <label>Nombre Completo</label>
+    <input type="text" [(ngModel)]="userData.nombre" name="nombre" placeholder="Juan Pérez" required />
+  </div>
+
+  <div class="form-group">
+    <label>Correo Electrónico</label>
+    <input type="email" [(ngModel)]="userData.email" name="email" placeholder="juan.perez@ejemplo.cl" required />
+  </div>
+
+  <div class="form-group">
+    <label>Cargo u Ocupación</label>
+    <select [(ngModel)]="userData.cargo" name="cargo">
+      <option value="Técnico Agrícola">Técnico Agrícola</option>
+      <option value="Administrador">Administrador</option>
+      <option value="Regador / Operador">Regador / Operador</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input type="password" [(ngModel)]="userData.password" name="password" placeholder="Mínimo 6 caracteres" required />
+  </div>
+
+  <!-- Forzamos el click directo con (click)="onRegister()" -->
+  <button type="button" class="btn-primary" (click)="onRegister()" [disabled]="loading">
+    {{ loading ? 'Guardando en MongoDB...' : 'Crear Cuenta' }}
+  </button>
+</form>

@@ -1,0 +1,160 @@
+$c-dark: #0a0f0d;
+$c-agro: #1b4332;
+$c-leaf: #2d6a4f;
+$c-mint: #d8f3dc;
+$c-green: #4ade80;
+$c-border: #e2e8f0;
+
+.navbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 68px;
+  background: rgba(10, 15, 13, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.navbar-container {
+  max-width: 1240px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* Brand / Logotipo */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+
+  .navbar-logo-img {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.4));
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+  }
+}
+
+/* Enlaces */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.4rem 0.2rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: #ffffff;
+    }
+
+    &.active {
+      color: #86efac;
+      border-bottom-color: #86efac;
+    }
+  }
+}
+
+/* Acciones y Botones */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .btn-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
+    }
+  }
+
+  .btn-primary {
+    background: #2d6a4f;
+    border: 1px solid #52b788;
+    color: #ffffff;
+
+    &:hover {
+      background: #40916c;
+    }
+  }
+
+  .btn-logout-nav {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+  }
+
+  .user-greeting-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    text-decoration: none;
+
+    .online-indicator {
+      width: 8px;
+      height: 8px;
+      background: $c-green;
+      border-radius: 50%;
+      box-shadow: 0 0 6px $c-green;
+    }
+
+    &:hover {
+      border-color: #86efac;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}
