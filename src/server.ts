@@ -1,14 +1,14 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr/node';
 import express from 'express';
-import cors from 'cors'; // 👈 Importamos CORS
+import cors from 'cors';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
-import { connectDB } from './server/db'; 
-import authRoutes from './server/routes/auth.routes';
-import aforoRoutes from './server/routes/aforo.routes';
-import turnosRoutes from './server/routes/turnos.routes';
+import { connectDB } from '../server/db';
+import authRoutes from '../server/routes/auth.routes';
+import aforoRoutes from '../server/routes/aforo.routes';
+import turnosRoutes from '../server/routes/turnos.routes';
 
 export function app(): express.Express {
   const server = express();
@@ -21,28 +21,31 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // 👈 Permite peticiones HTTP entre el puerto 4200 (Angular) y el puerto 4000 (Express)
   server.use(cors({
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
-  // Middleware para recibir JSON en las peticiones API
   server.use(express.json());
 
-  // ==========================================
-  // 🚀 RUTAS DE LA API (Auth, Aforo y Turnos)
-  // ==========================================
+  // Servir archivos estáticos del navegador
+  server.use(
+    express.static(browserDistFolder, {
+      maxAge: '1y',
+      index: false,
+      redirect: false
+    })
+  );
+
+  // Rutas de API REST
   server.use('/api/auth', authRoutes);
   server.use('/api/aforo', aforoRoutes);
   server.use('/api/turnos', turnosRoutes);
 
-  // ==========================================
-  // RUTAS DE ANGULAR SSR
-  // ==========================================
-  server.get('/*path', (req, res, next) => {
+  // Manejador SSR con comodín nombrado compatible
+  server.get('/{*path}', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     commonEngine
@@ -63,13 +66,21 @@ export function app(): express.Express {
 function run(): void {
   const port = process.env['PORT'] || 4000;
 
-  // Conectar a MongoDB antes de arrancar el servidor Express
-  connectDB().then(() => {
-    const server = app();
-    server.listen(port, () => {
-      console.log(`Node Express server listening on http://localhost:${port}`);
+  connectDB()
+    .then(() => {
+      const server = app();
+      server.listen(port, () => {
+        console.log(`Node Express server listening on http://localhost:${port}`);
+      });
+    })
+    .catch((err) => {
+      console.error('❌ Error crítico al iniciar MongoDB antes de Express:', err);
     });
-  });
 }
 
 run();
+
+export const reqHandler = (req: any, res: any, next: any) => {
+  const expressApp = app();
+  expressApp(req, res, next);
+};
