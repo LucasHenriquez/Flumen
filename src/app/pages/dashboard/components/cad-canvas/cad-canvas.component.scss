@@ -1,0 +1,216 @@
+$c-canvas-bg: #050a11;
+$c-stream: #38bdf8;
+$c-gate-open: #10b981;
+$c-gate-closed: #ef4444;
+
+.cad-card-container {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+
+  .cad-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .toolbar-title {
+      .title-with-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+
+        h4 {
+          margin: 0;
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.3px;
+        }
+
+        .scale-indicator {
+          font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: #0284c7;
+          background: #e0f2fe;
+          padding: 0.15rem 0.55rem;
+          border-radius: 4px;
+        }
+      }
+
+      p {
+        margin: 0.2rem 0 0 0;
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+    }
+
+    .topographic-legend {
+      display: flex;
+      gap: 0.95rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #475569;
+      flex-wrap: wrap;
+
+      .legend-item { display: flex; align-items: center; gap: 0.35rem; }
+      .dot-color {
+        width: 8.5px; height: 8.5px; border-radius: 50%;
+        &.dot-matriz { background: #0284c7; }
+        &.dot-regadera { background: $c-stream; }
+        &.dot-compuerta-on { background: $c-gate-open; }
+        &.dot-compuerta-off { background: $c-gate-closed; }
+        &.dot-curva { background: #ffffff; border: 1px dashed #64748b; }
+      }
+    }
+  }
+
+  .canvas-viewport {
+    width: 100%;
+    background: $c-canvas-bg;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    overflow: hidden;
+    position: relative;
+
+    .cad-svg {
+      width: 100%;
+      height: 600px;
+      display: block;
+
+      .mono-cota {
+        font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 700;
+        fill: #94a3b8;
+        letter-spacing: 0.8px;
+      }
+
+      .mono-slope {
+        font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .topo-cota-txt {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        font-weight: 600;
+        fill: rgba(255, 255, 255, 0.45);
+      }
+
+      .vertices-cartograficos text {
+        font-family: 'JetBrains Mono', monospace;
+        fill: rgba(255, 255, 255, 0.35);
+        font-size: 9px;
+      }
+
+      .terraplen-body {
+        stroke: rgba(255, 255, 255, 0.28);
+        stroke-width: 1.8;
+      }
+
+      .cuartel-title {
+        font-size: 11.5px;
+        font-weight: 800;
+        fill: #ffffff;
+        letter-spacing: 0.4px;
+      }
+
+      .cuartel-sub {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        font-weight: 700;
+        fill: #86efac;
+      }
+
+      .canal-matriz-mesh {
+        stroke: #ffffff;
+        stroke-width: 1.8;
+        cursor: grab;
+        filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.7));
+        &:active { cursor: grabbing; }
+      }
+
+      .canal-matriz-text {
+        font-family: 'JetBrains Mono', monospace;
+        fill: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+      }
+
+      .water-stream-flow {
+        stroke: $c-stream;
+        stroke-width: 3.8;
+        stroke-dasharray: 8, 5;
+        animation: streamWaterFlow 1s linear infinite;
+        will-change: stroke-dashoffset;
+
+        &.closed {
+          animation: none;
+          opacity: 0.25;
+          stroke-dasharray: none;
+        }
+      }
+
+      .hitbox-drag-v, .hitbox-drag-h {
+        cursor: grab;
+        &:active { cursor: grabbing; }
+      }
+
+      .compuerta-wrapper {
+        cursor: pointer;
+        .compuerta-handle {
+          filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.6));
+          &:hover { filter: brightness(1.2); }
+        }
+      }
+
+      .btn-del-group {
+        cursor: pointer;
+        .btn-del-bg {
+          fill: #ef4444;
+          opacity: 0.85;
+          &:hover { opacity: 1; }
+        }
+        .txt-x {
+          fill: #ffffff;
+          font-size: 11.5px;
+          font-weight: 900;
+        }
+      }
+
+      /* TIRADORES CAD ESTABLES SIN TRANSFORM QUE GENEREN BUCLES */
+      .cad-handle {
+        user-select: none;
+
+        &.ew-resize { cursor: ew-resize; }
+        &.ns-resize { cursor: ns-resize; }
+        &.corner-resize { cursor: nwse-resize; }
+
+        &:hover {
+          filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
+        }
+      }
+    }
+  }
+}
+
+@keyframes streamWaterFlow {
+  from {
+    stroke-dashoffset: 26;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

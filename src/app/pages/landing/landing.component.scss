@@ -1,0 +1,839 @@
+/* Variables Corporativas Agro-Tech (FLUMEN) */
+$c-dark: #0a0f0d;
+$c-agro: #1b4332;
+$c-leaf: #2d6a4f;
+$c-fresh: #40916c;
+$c-mint: #d8f3dc;
+$c-cyan: #38bdf8;
+$c-green-glow: #4ade80;
+$c-bg-light: #f8fafc;
+$c-border: #e2e8f0;
+
+.landing-corporate {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
+.corporate-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ==========================================================
+   1. HERO VIDEO SECTION (AJUSTE AUTOMÁTICO - ANTI-DESBORDE)
+   ========================================================== */
+.hero-video-section {
+  position: relative;
+  height: calc(100vh - 72px); /* Se descuenta la altura del Navbar para calzar 1:1 */
+  min-height: 520px; /* Evita que se colapse en pantallas diminutas */
+  max-height: 850px; /* Límite para monitores ultrawide o 4K */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: #000000;
+  overflow: hidden;
+
+  .video-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    .bg-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.55; /* Se baja un poco la opacidad para que el logo brille aún más */
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at center,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(10, 15, 13, 0.88) 100%
+      );
+    }
+  }
+
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .hero-center-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Contenedor del Logo con escalado basado en viewport */
+.hero-logo-showcase {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 25vw; /* Escala de manera proporcional al ancho de la pantalla */
+  min-width: 200px; /* Tamaño mínimo en celulares */
+  max-height: 40vh; /* No puede usar más del 40% del alto útil de la pantalla */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .hero-logo-main {
+    width: 100%;
+    height: 100%;
+    max-height: 320px; /* Evita gigantismo en monitores 4K */
+    object-fit: contain;
+    filter: brightness(1.35) 
+            contrast(1.15) 
+            drop-shadow(0 0 30px rgba(45, 106, 79, 0.8))
+            drop-shadow(0 0 15px rgba(56, 189, 248, 0.45));
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 1.25vw, 1.35rem); /* Ajuste tipográfico automático */
+  line-height: 1.5;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0 0 2rem 0;
+  max-width: 580px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 15px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.3px;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.btn-agro-primary {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #ffffff;
+  padding: 0.95rem 2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid #52b788;
+  transition: all 0.25s ease;
+
+  &.btn-glow {
+    box-shadow: 0 4px 22px rgba(74, 222, 128, 0.4);
+    &:hover {
+      box-shadow: 0 6px 30px rgba(74, 222, 128, 0.6);
+      transform: translateY(-2px);
+    }
+  }
+
+  .svg-arrow {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s;
+  }
+  &:hover .svg-arrow {
+    transform: translateX(4px);
+  }
+}
+
+.btn-agro-glass {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 0.95rem 1.85rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+  }
+}
+
+/* ==========================================================
+   2. KPI BANNER
+   ========================================================== */
+.kpi-banner {
+  background: #ffffff;
+  border-bottom: 1px solid $c-border;
+  padding: 2.75rem 0;
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .kpi-box {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+
+    .kpi-icon-wrap {
+      width: 52px;
+      height: 52px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        width: 26px;
+        height: 26px;
+        color: $c-leaf;
+      }
+    }
+
+    .kpi-data {
+      display: flex;
+      flex-direction: column;
+
+      .kpi-val {
+        font-size: 2rem;
+        font-weight: 900;
+        color: $c-agro;
+        line-height: 1.1;
+      }
+      .kpi-lbl {
+        font-size: 0.82rem;
+        color: #64748b;
+        margin-top: 0.15rem;
+      }
+    }
+  }
+}
+
+/* ==========================================================
+   3. SECCIÓN CASOS DE USO / PILARES
+   ========================================================== */
+.pillars-section {
+  padding: 6rem 0;
+  background: $c-bg-light;
+}
+
+.section-title-wrap {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3.5rem auto;
+
+  .section-tag {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: $c-leaf;
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 0.6rem;
+
+    &.text-mint { color: #95d5b2; }
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: $c-dark;
+    line-height: 1.2;
+    margin: 0 0 0.85rem 0;
+  }
+
+  p {
+    font-size: 1.05rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  &.light {
+    h2 { color: #ffffff; }
+    p { color: #cbd5e1; }
+  }
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.pillar-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid $c-border;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 30px rgba(11, 29, 22, 0.08);
+  }
+
+  .pillar-img-wrap {
+    position: relative;
+    height: 200px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pillar-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(11, 29, 22, 0.85);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+    }
+  }
+
+  .pillar-body {
+    padding: 1.75rem;
+
+    h3 {
+      font-size: 1.25rem;
+      color: $c-dark;
+      margin: 0 0 0.75rem 0;
+      font-weight: 800;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+}
+
+/* ==========================================================
+   4. WORKFLOW SECTION
+   ========================================================== */
+.workflow-section {
+  padding: 6rem 0;
+  background: $c-agro;
+  color: white;
+
+  .workflow-cards {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .step-card {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: #52b788;
+      color: $c-dark;
+      font-weight: 900;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem auto;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin: 0 0 0.6rem 0;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      line-height: 1.55;
+      margin: 0;
+    }
+  }
+
+  .step-arrow {
+    svg {
+      width: 28px;
+      height: 28px;
+      color: #95d5b2;
+    }
+  }
+}
+
+/* ==========================================================
+   5. CTA EMPRESARIAL
+   ========================================================== */
+.cta-corporate-section {
+  padding: 5rem 0 6rem 0;
+
+  .cta-inner-card {
+    background: linear-gradient(135deg, $c-dark 0%, $c-agro 100%);
+    border-radius: 20px;
+    padding: 3.8rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 20px 40px rgba(11, 29, 22, 0.25);
+  }
+
+  .cta-text {
+    max-width: 600px;
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin: 0 0 0.8rem 0;
+    }
+    p {
+      font-size: 1.05rem;
+      color: #d8f3dc;
+      margin: 0;
+    }
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .btn-agro-solid {
+    background: #ffffff;
+    color: $c-dark;
+    padding: 0.95rem 1.85rem;
+    border-radius: 8px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background 0.2s;
+    &:hover { background: #d8f3dc; }
+  }
+
+  .btn-agro-outline-light {
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    padding: 0.9rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+    &:hover { background: rgba(255, 255, 255, 0.15); }
+  }
+}
+
+/* ==========================================================
+   6. FOOTER INSTITUCIONAL
+   ========================================================== */
+.corporate-footer {
+  background: #ffffff;
+  border-top: 1px solid $c-border;
+  padding: 4rem 0 2rem 0;
+
+  .footer-main-row {
+    max-width: 1240px;
+    margin: 0 auto 3rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .footer-brand-col {
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      .footer-logo-img {
+        height: 48px;
+        width: auto;
+        min-width: 48px;
+        max-width: 160px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .logo-name {
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: $c-dark;
+      }
+    }
+
+    .brand-desc {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0;
+    }
+  }
+
+  .footer-nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .col-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $c-dark;
+      margin-bottom: 0.4rem;
+    }
+
+    a, span {
+      font-size: 0.9rem;
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: $c-leaf;
+    }
+  }
+
+  .footer-bottom-row {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 1.8rem 1.5rem 0 1.5rem;
+    border-top: 1px solid $c-border;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: #94a3b8;
+  }
+}
+
+/* ==========================================================
+   ANIMACIONES
+   ========================================================== */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================
+   REGLAS RESPONSIVAS (MÓVIL Y DISPOSITIVOS PEQUEÑOS)
+   ========================================================== */
+@media (max-width: 768px) {
+  .hero-video-section {
+    height: calc(100vh - 64px);
+    padding: 1.5rem 1rem;
+  }
+
+  .hero-logo-showcase {
+    max-width: 42vw; /* Se le da más holgura en pantallas angostas */
+    min-width: 155px;
+    max-height: 35vh;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 0.85rem;
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 0.85rem 1.5rem;
+    }
+  }
+
+  .workflow-section .workflow-cards {
+    flex-direction: column;
+    .step-arrow { transform: rotate(90deg); margin: 0.5rem 0; }
+  }
+
+  .cta-corporate-section .cta-inner-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    
+    .cta-buttons { 
+      justify-content: center; 
+      flex-wrap: wrap; 
+      width: 100%;
+      .btn { width: 100%; }
+    }
+  }
+
+  .corporate-footer .footer-main-row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  /* ==========================================================
+   1. HERO VIDEO SECTION (PROPORCIONES EXACTAS MULTIDISPOSITIVO)
+   ========================================================== */
+.hero-video-section {
+  position: relative;
+  min-height: calc(100vh - 65px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.25rem;
+  background: #000000;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  .video-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    .bg-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at center,
+        rgba(0, 0, 0, 0.45) 0%,
+        rgba(10, 15, 13, 0.88) 100%
+      );
+    }
+  }
+
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .hero-center-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Escalado Óptimo del Logotipo */
+.hero-logo-showcase {
+  margin-bottom: 1.25rem;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .hero-logo-main {
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: contain;
+    filter: brightness(1.3) 
+            contrast(1.15) 
+            drop-shadow(0 0 25px rgba(45, 106, 79, 0.75))
+            drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
+  }
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.5;
+  color: #f1f5f9;
+  font-weight: 500;
+  margin: 0 0 1.75rem 0;
+  max-width: 580px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+  padding: 0 0.5rem;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.btn-agro-primary {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #ffffff;
+  padding: 0.9rem 1.8rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid #52b788;
+  box-shadow: 0 4px 20px rgba(74, 222, 128, 0.35);
+
+  .svg-arrow {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.btn-agro-glass {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 0.9rem 1.7rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+/* ==========================================================
+   BOTONES HERO: ADAPTACIÓN Y PROPORCIÓN MÓVIL
+   ========================================================== */
+.hero-cta-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 1rem;            /* Margen de seguridad para que nunca toquen los bordes */
+  box-sizing: border-box;
+}
+
+.btn-agro-primary,
+.btn-agro-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 50px;              /* Altura táctil estándar recomendada */
+  padding: 0 1.6rem;
+  border-radius: 12px;       /* Bordes redondeados más modernos */
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+  white-space: nowrap;       /* Evita que el texto se quiebre en líneas raras */
+}
+
+.btn-agro-primary {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: #ffffff;
+  border: 1px solid #52b788;
+  box-shadow: 0 4px 18px rgba(74, 222, 128, 0.35);
+
+  .svg-arrow {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .svg-arrow {
+    transform: translateX(4px);
+  }
+}
+
+.btn-agro-glass {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: #ffffff;
+  }
+}
+
+/* ==========================================================
+   AJUSTE ESPECÍFICO PARA CELULARES
+   ========================================================== */
+@media (max-width: 768px) {
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+    max-width: 340px;         /* Limita el ancho en celular para evitar que se deformen */
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .btn-agro-primary,
+  .btn-agro-glass {
+    width: 100%;             /* Ocupa el 100% de los 340px, no de toda la pantalla */
+    height: 48px;
+    font-size: 0.92rem;
+    white-space: normal;     /* Permite ajuste si la pantalla es muy pequeña */
+    text-align: center;
+  }
+}
+}

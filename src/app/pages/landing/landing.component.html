@@ -1,0 +1,240 @@
+<app-navbar></app-navbar>
+
+<div class="landing-corporate">
+  <!-- 1. HERO SECTION ADAPTATIVA -->
+  <section class="hero-video-section">
+    <div class="video-container">
+      <video autoplay [muted]="true" loop playsinline preload="auto" class="bg-video">
+        <source src="/videos/flumen-hero-landing-page.mp4" type="video/mp4">
+        <source src="/videos/flumen hero landing page.mp4" type="video/mp4">
+        <source src="/assets/videos/flumen-hero-landing-page.mp4" type="video/mp4">
+      </video>
+      <div class="video-overlay"></div>
+    </div>
+
+    <div class="hero-content-wrapper">
+      <div class="hero-center-box animate-fade-in-up">
+        <!-- Contenedor del Logo con escalado inteligente -->
+        <div class="hero-logo-showcase">
+          <!-- Se puede usar logo-flumen.svg o logo-flumen.png en base a tu archivo, se mantiene .svg/png por compatibilidad -->
+          <img src="/media/logo-flumen.png" alt="FLUMEN — Gestión Hídrica Agrícola" class="hero-logo-main">
+        </div>
+
+        <p class="hero-tagline">
+          Ecosistema digital de aforo, control de turnos y referencia de cobro de riego.
+        </p>
+
+        <!-- Botones de Acción Directa siempre visibles -->
+        <div class="hero-cta-group">
+          <a routerLink="/calculadora" class="btn btn-agro-primary btn-glow">
+            <span>Ingresar a la Ventanilla de Riego</span>
+            <svg class="svg-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a routerLink="/register" class="btn btn-agro-glass">
+            Registrar Asociación / Predio
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. BARRA DE CIFRAS Y RENDIMIENTO -->
+  <section class="kpi-banner">
+    <div class="corporate-container">
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-val">100%</span>
+            <span class="kpi-lbl">Transparencia en el cobro</span>
+          </div>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-val">&lt; 10s</span>
+            <span class="kpi-lbl">Tiempo de cubicación en terreno</span>
+          </div>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-val">0%</span>
+            <span class="kpi-lbl">Discrepancia matemática</span>
+          </div>
+        </div>
+
+        <div class="kpi-box">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-val">-25%</span>
+            <span class="kpi-lbl">Pérdida de agua por desfase</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PILARES ESTRATÉGICOS -->
+  <section class="pillars-section">
+    <div class="corporate-container">
+      <div class="section-title-wrap">
+        <span class="section-tag">Solución Integral</span>
+        <h2>¿Por qué FLUMEN transforma la administración hídrica?</h2>
+        <p>Una herramienta diseñada para generar confianza entre quien entrega el agua y quien la paga.</p>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-img-wrap">
+            <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=600&q=80" alt="Aforo de compuertas">
+            <span class="pillar-badge">En Compuerta</span>
+          </div>
+          <div class="pillar-body">
+            <h3>Fin al Cálculo Manual</h3>
+            <p>Se acabó anotar en libretas o estimar tiempos "al ojo". El operador ingresa los centímetros de agua de la regla y el sistema entrega el caudal exacto en segundos.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-img-wrap">
+            <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" alt="Riego en huertos">
+            <span class="pillar-badge">Para el Agricultor</span>
+          </div>
+          <div class="pillar-body">
+            <h3>Saber qué se Paga antes de Regar</h3>
+            <p>El regante obtiene un ticket de referencia con el desglose exacto de metros cúbicos y horas autorizadas antes de presentarse a la ventanilla comunitaria o municipal.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-img-wrap">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=600&q=80" alt="Infraestructura hídrica">
+            <span class="pillar-badge">Para Canalistas y Municipios</span>
+          </div>
+          <div class="pillar-body">
+            <h3>Trazabilidad y Cero Disputas</h3>
+            <p>Estandariza los cobros basados en la tarifa oficial por m³, eliminando desacuerdos en asambleas y garantizando un uso justo del recurso en tiempos de escasez.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. FLUJO DE OPERACIÓN EN 3 PASOS -->
+  <section class="workflow-section">
+    <div class="corporate-container">
+      <div class="section-title-wrap light">
+        <span class="section-tag text-mint">Metodología Operativa</span>
+        <h2>¿Cómo funciona la referencia de turno?</h2>
+        <p>Un procedimiento simple en tres pasos para utilizar en terreno o en la oficina de regantes.</p>
+      </div>
+
+      <div class="workflow-cards">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h4>Lectura en Regla</h4>
+          <p>El celador o técnico observa la cota del agua en la compuerta e ingresa el tirante medido.</p>
+        </div>
+
+        <div class="step-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h4>Cálculo de Flujo & Cobro</h4>
+          <p>El motor hidráulico procesa Manning y calcula las horas requeridas multiplicadas por la tarifa municipal.</p>
+        </div>
+
+        <div class="step-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h4>Emisión de Comprobante</h4>
+          <p>Se genera el resumen con sello de turno que el agricultor presenta para pagar su derecho de paso.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CALL TO ACTION EMPRESARIAL -->
+  <section class="cta-corporate-section">
+    <div class="corporate-container">
+      <div class="cta-inner-card">
+        <div class="cta-text">
+          <h2>Moderniza la administración hídrica de tus canales</h2>
+          <p>Utiliza nuestra calculadora en línea de libre acceso o contacta con el equipo de proyecto para implementaciones en tu canal.</p>
+        </div>
+        <div class="cta-buttons">
+          <a routerLink="/calculadora" class="btn btn-agro-solid">Probar Ventanilla Digital</a>
+          <a routerLink="/register" class="btn btn-agro-outline-light">Crear Cuenta de Regante</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FOOTER INSTITUCIONAL -->
+  <footer class="corporate-footer">
+    <div class="corporate-container">
+      <div class="footer-main-row">
+        <div class="footer-brand-col">
+          <div class="footer-logo">
+            <img src="/media/logo-flumen.png" alt="FLUMEN Logo" class="footer-logo-img">
+            <span class="logo-name">FLUMEN</span>
+          </div>
+          <p class="brand-desc">
+            Sistema de modelamiento hidráulico, asignación de turnos y referencia de cobro para el sector agrícola.
+          </p>
+        </div>
+
+        <div class="footer-nav-col">
+          <span class="col-title">Plataforma</span>
+          <a routerLink="/calculadora">Calculadora de Turnos</a>
+          <a routerLink="/login">Acceso Regantes</a>
+          <a routerLink="/register">Registro</a>
+        </div>
+
+        <div class="footer-nav-col">
+          <span class="col-title">Marco Legal & Técnico</span>
+          <span>Ecuación de Manning-Strickler</span>
+          <span>Tarificación por Metro Cúbico</span>
+          <span>Reglamento de Canalistas</span>
+        </div>
+      </div>
+
+      <div class="footer-bottom-row">
+        <span>© 2026 FLUMEN Tech Solutions — Proyecto de Título Ingeniería en Informática[cite: 5].</span>
+        <span>Santiago, Chile</span>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,79 @@
+<section id="sec-historial" class="history-section">
+  <div class="history-card">
+    <div class="history-header">
+      <div class="header-title">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+        </svg>
+        <h3>Historial Oficial de Turnos de Riego</h3>
+      </div>
+      <span class="badge-mongo">{{ historial.length }} registros en MongoDB Atlas</span>
+    </div>
+
+    <div class="table-container">
+      <table class="flumen-table">
+        <thead>
+          <tr>
+            <th>Fecha y Hora</th>
+            <th>Predio</th>
+            <th>Cultivo</th>
+            <th>Superficie</th>
+            <th>Caudal</th>
+            <th>Duración</th>
+            <th>Volumen</th>
+            <th>Costo Total</th>
+            <th class="text-center">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let turno of historial">
+            <td class="td-date">{{ turno.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="td-predio">
+              <strong>{{ turno.nombrePredio || turno.predio?.nombre || 'Sector Los Maitenes' }}</strong>
+            </td>
+            <td>
+              <span class="crop-tag">
+                {{ turno.cultivoIcono || '🌱' }} {{ turno.cultivo || turno.predio?.cultivo || 'Cultivo no especificado' }}
+              </span>
+            </td>
+            <td>{{ turno.superficieHa || turno.predio?.superficieHa || '2.0' }} Ha</td>
+            <td>
+              <span class="badge-flow">
+                {{ turno.calculosHidraulicos?.caudalLitrosSeg || turno.resultadosHidraulicos?.caudalLitrosSeg || 0 }} L/s
+              </span>
+            </td>
+            <td class="td-duration">
+              <ng-container *ngIf="turno.liquidacionTurno">
+                {{ turno.liquidacionTurno.tiempoHoras }}h {{ turno.liquidacionTurno.tiempoMinutos < 10 ? '0' + turno.liquidacionTurno.tiempoMinutos : turno.liquidacionTurno.tiempoMinutos }}m
+              </ng-container>
+              <ng-container *ngIf="!turno.liquidacionTurno">
+                {{ turno.gestionTurno?.tiempoFormateado || '0h 0m' }}
+              </ng-container>
+            </td>
+            <td class="td-volume">
+              {{ (turno.liquidacionTurno?.volumenM3 || turno.gestionTurno?.volumenObjetivoM3 || 0) | number }} m³
+            </td>
+            <td class="td-cost">
+              <strong>${{ (turno.liquidacionTurno?.costoTotalCLP || turno.gestionTurno?.costoTotalCLP || 0) | number }}</strong>
+            </td>
+            <td class="text-center">
+              <button type="button" class="btn-delete" (click)="eliminarRegistro.emit(turno._id)" title="Eliminar registro">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="historial.length === 0">
+            <td colspan="9" class="empty-state">
+              🍃 No hay turnos registrados en la base de datos todavía.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

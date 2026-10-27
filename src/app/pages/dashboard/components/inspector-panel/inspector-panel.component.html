@@ -1,0 +1,212 @@
+<section class="card-inspector">
+  <!-- ENCABEZADO CON SELECTOR DE PESTAÑAS -->
+  <header class="inspector-header">
+    <div class="header-main">
+      <div class="title-group">
+        <h3>Configuración</h3>
+        <span class="badge-role">{{ cultivoSeleccionado.subcategoria || 'Cultivo' }}</span>
+      </div>
+      <span class="badge-sub">{{ cultivoSeleccionado.icono }} {{ cultivoSeleccionado.nombre }}</span>
+    </div>
+
+    <div class="tab-switcher">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="tabActiva === 'agronomico'" 
+        (click)="tabActiva = 'agronomico'">
+        🌱 Agronomía & Predio
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="tabActiva === 'hidraulica'" 
+        (click)="tabActiva = 'hidraulica'">
+        💧 Aforo & Canal
+      </button>
+    </div>
+  </header>
+
+  <!-- FICHA TÉCNICA DINÁMICA RESUMIDA -->
+  <div class="crop-tech-card">
+    <div class="tech-metric">
+      <span class="metric-label">Demanda Anual</span>
+      <strong class="metric-val text-blue">{{ cultivoSeleccionado.demandaAnualM3Ha }}</strong>
+    </div>
+    <div class="tech-metric">
+      <span class="metric-label">Lámina / Turno</span>
+      <strong class="metric-val text-green">{{ cultivoSeleccionado.laminaMm }} mm</strong>
+    </div>
+    <div class="tech-metric">
+      <span class="metric-label">Factor Kc</span>
+      <strong class="metric-val">{{ cultivoSeleccionado.kc }}</strong>
+    </div>
+    <div class="tech-metric">
+      <span class="metric-label">Frecuencia</span>
+      <strong class="metric-val">c/{{ cultivoSeleccionado.frecuenciaDias }} d</strong>
+    </div>
+    <div class="tech-strategy" *ngIf="cultivoSeleccionado.estrategiaRiego">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>{{ cultivoSeleccionado.estrategiaRiego }}</span>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 1: AGRONOMÍA Y GEOMETRÍA -->
+  <div class="tab-content" *ngIf="tabActiva === 'agronomico'">
+    <div class="form-group">
+      <label for="select-cultivo">Especie & Demanda (INIA / CNR)</label>
+      <select id="select-cultivo" [(ngModel)]="cultivoKey" (change)="cambiarCultivo()">
+        <optgroup label="🍒 Frutales de Carozo y Pomáceas">
+          <option value="cerezo">🍒 Cerezo (6.500 - 8.200 m³/ha) &bull; 45 mm (Kc: 0.95)</option>
+          <option value="manzano">🍎 Manzano (7.500 - 9.500 m³/ha) &bull; 50 mm (Kc: 0.90)</option>
+          <option value="ciruelo">🟣 Ciruelo (6.000 - 7.000 m³/ha) &bull; 42 mm (Kc: 0.85)</option>
+          <option value="duraznero">🍑 Duraznero / Nectarino (7.500 - 8.500 m³/ha) &bull; 48 mm (Kc: 0.90)</option>
+          <option value="pera">🍐 Peral (7.000 - 9.000 m³/ha) &bull; 46 mm (Kc: 0.88)</option>
+          <option value="damasco">🟠 Damasco (6.000 - 7.500 m³/ha) &bull; 40 mm (Kc: 0.82)</option>
+        </optgroup>
+
+        <optgroup label="🌰 Frutos Secos">
+          <option value="nogal">🌰 Nogal Chandler (9.500 - 11.000 m³/ha) &bull; 58 mm (Kc: 1.05)</option>
+          <option value="avellano">🌰 Avellano Europeo (6.500 - 8.000 m³/ha) &bull; 50 mm (Kc: 0.95)</option>
+          <option value="almendro">🟤 Almendro (6.000 - 7.500 m³/ha) &bull; 44 mm (Kc: 0.80)</option>
+        </optgroup>
+
+        <optgroup label="🫐 Berries y Frutos Pequeños">
+          <option value="arandano">🫐 Arándano (4.500 - 6.000 m³/ha) &bull; 32 mm (Kc: 0.88)</option>
+          <option value="frambuesa">🍇 Frambuesa / Mora (4.000 - 5.500 m³/ha) &bull; 30 mm (Kc: 0.82)</option>
+          <option value="frutilla">🍓 Frutilla en Camellón (5.000 - 7.000 m³/ha) &bull; 35 mm (Kc: 0.85)</option>
+        </optgroup>
+
+        <optgroup label="🍊 Cítricos, Tropicales y Vides">
+          <option value="citricos">🍊 Cítricos / Limoneros (7.500 - 10.500 m³/ha) &bull; 48 mm (Kc: 0.80)</option>
+          <option value="palto">🥑 Palto Hass (9.000 - 11.000 m³/ha) &bull; 52 mm (Kc: 0.85)</option>
+          <option value="olivo">🫒 Olivo (4.000 - 6.000 m³/ha) &bull; 28 mm (Kc: 0.60)</option>
+          <option value="kiwi">🥝 Kiwi Hayward (8.500 - 10.000 m³/ha) &bull; 55 mm (Kc: 1.00)</option>
+          <option value="uva_mesa">🍇 Uva de Mesa (6.500 - 8.000 m³/ha) &bull; 42 mm (Kc: 0.80)</option>
+          <option value="uva_vinifera">🍷 Uva Vinífera (3.500 - 5.000 m³/ha) &bull; 26 mm (Kc: 0.62)</option>
+          <option value="tuna">🌵 Tuna Zonas Áridas (1.500 - 3.000 m³/ha) &bull; 18 mm (Kc: 0.35)</option>
+        </optgroup>
+
+        <optgroup label="🍅 Hortalizas de Fruto">
+          <option value="tomate">🍅 Tomate (5.500 - 7.000 m³/ha) &bull; 36 mm (Kc: 1.05)</option>
+          <option value="choclo">🌽 Choclo Dulce (5.000 - 6.500 m³/ha) &bull; 45 mm (Kc: 1.15)</option>
+          <option value="zapallo">🎃 Zapallo (4.000 - 5.500 m³/ha) &bull; 38 mm (Kc: 0.95)</option>
+          <option value="pimenton">🫑 Pimentón / Ají (5.000 - 6.500 m³/ha) &bull; 36 mm (Kc: 1.00)</option>
+          <option value="pepino">🥒 Pepino / Berenjena (4.500 - 5.500 m³/ha) &bull; 34 mm (Kc: 0.98)</option>
+        </optgroup>
+
+        <optgroup label="🥬 Hortalizas de Hoja y Crucíferas">
+          <option value="lechuga">🥬 Lechuga (2.000 - 3.500 m³/ha) &bull; 24 mm (Kc: 0.95)</option>
+          <option value="esparrago">🌱 Espárrago Verde (6.500 - 8.000 m³/ha) &bull; 46 mm (Kc: 0.95)</option>
+          <option value="alcachofa">🌿 Alcachofa (5.000 - 6.500 m³/ha) &bull; 42 mm (Kc: 0.90)</option>
+          <option value="acelga">🍃 Acelga / Espinaca (2.500 - 4.000 m³/ha) &bull; 26 mm (Kc: 0.92)</option>
+          <option value="cruciferas">🥦 Brócoli / Coliflor (4.000 - 5.500 m³/ha) &bull; 35 mm (Kc: 0.98)</option>
+        </optgroup>
+
+        <optgroup label="🧅 Bulbos, Raíces y Leguminosas">
+          <option value="cebolla">🧅 Cebolla (4.500 - 6.000 m³/ha) &bull; 35 mm (Kc: 1.00)</option>
+          <option value="zanahoria">🥕 Zanahoria (4.000 - 5.500 m³/ha) &bull; 32 mm (Kc: 0.95)</option>
+          <option value="papa">🥔 Papa (5.000 - 6.500 m³/ha) &bull; 40 mm (Kc: 1.10)</option>
+          <option value="ajo">🧄 Ajo (2.500 - 4.000 m³/ha) &bull; 28 mm (Kc: 0.85)</option>
+          <option value="poroto">🫘 Poroto Verde / Granado (3.500 - 5.000 m³/ha) &bull; 32 mm (Kc: 0.95)</option>
+          <option value="haba_arveja">🫛 Haba / Arveja (2.500 - 4.000 m³/ha) &bull; 28 mm (Kc: 0.88)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Predio / Rol Matriz</label>
+      <input type="text" [(ngModel)]="nombrePredio" (ngModelChange)="emitirCambios()" placeholder="Ej: Rol 1420-5" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ancho (m)</label>
+        <input type="number" [(ngModel)]="anchoM" (input)="emitirCambios()" min="20" max="1500" step="5" />
+      </div>
+      <div class="form-group">
+        <label>Largo (m)</label>
+        <input type="number" [(ngModel)]="largoM" (input)="emitirCambios()" min="20" max="2500" step="5" />
+      </div>
+    </div>
+
+    <div class="surface-summary">
+      <span>Superficie: <strong>{{ superficieHa }} Ha</strong></span>
+      <span class="surface-m2">{{ (superficieHa * 10000) | number:'1.0-0' }} m²</span>
+    </div>
+
+    <div class="form-group">
+      <label>Sectores de Turno</label>
+      <div class="cuarteles-toggle">
+        <button type="button" [class.active]="numCuarteles === 1" (click)="cambiarCuarteles(1)">1 Lote</button>
+        <button type="button" [class.active]="numCuarteles === 2" (click)="cambiarCuarteles(2)">2 Sectores</button>
+        <button type="button" [class.active]="numCuarteles === 4" (click)="cambiarCuarteles(4)">4 Sectores</button>
+        <button type="button" [class.active]="numCuarteles === 6" (click)="cambiarCuarteles(6)">6 Sectores</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 2: INFRAESTRUCTURA HIDRÁULICA Y AFORO -->
+  <div class="tab-content" *ngIf="tabActiva === 'hidraulica'">
+    <div class="form-group">
+      <label>Entrada Matriz</label>
+      <div class="grid-cardinal">
+        <button type="button" [class.active]="ubicacionCanal === 'norte'" (click)="setUbicacionCanal('norte')">Norte</button>
+        <button type="button" [class.active]="ubicacionCanal === 'sur'" (click)="setUbicacionCanal('sur')">Sur</button>
+        <button type="button" [class.active]="ubicacionCanal === 'oeste'" (click)="setUbicacionCanal('oeste')">Oeste</button>
+        <button type="button" [class.active]="ubicacionCanal === 'este'" (click)="setUbicacionCanal('este')">Este</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Solera b (m)</label>
+        <input type="number" step="0.05" [(ngModel)]="anchoBase" (input)="emitirCambios()" />
+      </div>
+      <div class="form-group">
+        <label>Tirante y (cm)</label>
+        <input type="number" [(ngModel)]="tiranteCm" (input)="emitirCambios()" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pendiente S (%)</label>
+        <input type="number" step="0.01" [(ngModel)]="pendientePorc" (input)="emitirCambios()" />
+      </div>
+      <div class="form-group">
+        <label>Tarifa ($/m³)</label>
+        <input type="number" [(ngModel)]="tarifaM3CLP" (input)="emitirCambios()" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Rugosidad (n)</label>
+      <select [(ngModel)]="rugosidadManning" (change)="emitirCambios()">
+        <option [value]="0.015">Hormigón / Partidor (0.015)</option>
+        <option [value]="0.020">Mampostería Cemento (0.020)</option>
+        <option [value]="0.025">Tierra Limpia (0.025)</option>
+        <option [value]="0.035">Tierra Rústica con Malezas (0.035)</option>
+      </select>
+    </div>
+
+    <div class="canaletas-actions">
+      <button type="button" class="btn-action" (click)="onAgregarCanaleta()">+ Canaleta</button>
+      <button type="button" class="btn-action" (click)="onConmutarOrientacion()">Rotar Red</button>
+    </div>
+  </div>
+
+  <!-- BOTÓN DE GUARDADO SIEMPRE VISIBLE EN EL PIE -->
+  <button type="button" class="btn-save" (click)="onGuardarTurno()" [disabled]="guardando">
+    <svg *ngIf="!guardando" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+      <polyline points="7 3 7 8 15 8"></polyline>
+    </svg>
+    {{ guardando ? 'Guardando…' : 'Registrar Turno' }}
+  </button>
+</section>
