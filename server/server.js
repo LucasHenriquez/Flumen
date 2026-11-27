@@ -13,12 +13,27 @@ const RegistroTurno = require('./models/RegistroTurno');
 const app = express();
 
 // Middlewares
-app.use(cors());
-app.use(express.json());
+const JWT_SECRET = process.env.JWT_SECRET;
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
+if (!JWT_SECRET || JWT_SECRET.length < 32 || !MONGO_URI) throw new Error('Configuración segura de JWT y MongoDB requerida');
+const origins = (process.env.CORS_ORIGINS || 'http://localhost:4200').split(',').map(x => x.trim());
+app.use(cors({ origin: (origin, cb) => cb(null, !origin || origins.includes(origin)) }));
+app.use(express.json({ limit: '64kb' }));
 
-const JWT_SECRET = process.env.JWT_SECRET || 'flumen_secreto_super_seguro_2026';
-
-const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb+srv://lucas:Lucasllet2@cluster0.k7munpk.mongodb.net/flumen_db?retryWrites=true&w=majority';
+async function requireAuth(req, res, next) {
+  try {
+    const match = /^Bearer (\S+)$/.exec(req.get('Authorization') || '');
+    if (!match) return res.status(401).json({ success: false, message: 'Sesión requerida' });
+    const claims = jwt.verify(match[1], JWT_SECRET, { algorithms: ['HS256'] });
+    if (!mongoose.isValidObjectId(claims.id) || !await Usuario.exists({ _id: claims.id })) {
+      return res.status(401).json({ success: false, message: 'Sesión inválida' });
+    }
+    req.userId = claims.id;
+    next();
+  } catch {
+    return res.status(401).json({ success: false, message: 'Sesión inválida' });
+  }
+}
 
 console.log('Iniciando conexión a MongoDB Atlas...');
 
@@ -165,9 +180,9 @@ app.post('/api/auth/login', async (req, res) => {
 // ==========================================
 
 // 1. Obtener historial
-app.get(['/api/calculos', '/api/turnos'], async (req, res) => {
+app.get(['/api/calculos', '/api/turnos'], requireAuth, async (req, res) => {
   try {
-    const historial = await RegistroTurno.find().sort({ fechaCreacion: -1 }).limit(30);
+    const historial = await RegistroTurno.find({ usuarioId: req.userId }).sort({ fechaCreacion: -1 }).limit(30);
     return res.status(200).json({ success: true, data: historial });
   } catch (error) {
     console.error('Error al obtener cálculos:', error);
@@ -176,14 +191,10 @@ app.get(['/api/calculos', '/api/turnos'], async (req, res) => {
 });
 
 // 2. Guardar turno (Acepta tanto /api/calculos como /api/turnos)
-app.post(['/api/calculos', '/api/turnos'], async (req, res) => {
+app.post(['/api/calculos', '/api/turnos'], requireAuth, async (req, res) => {
   try {
-    // Si usuarioId viene como string vacío "", asignarlo como null para no romper la validación de ObjectId de Mongoose
-    if (req.body.usuarioId === '') {
-      req.body.usuarioId = null;
-    }
-
-    const nuevoCalculo = new RegistroTurno(req.body);
+    const { nombrePredio, cultivoKey, cultivo, cultivoIcono, parametrosCanal, calculosHidraulicos, liquidacionTurno } = req.body;
+    const nuevoCalculo = new RegistroTurno({ usuarioId: req.userId, nombrePredio, cultivoKey, cultivo, cultivoIcono, parametrosCanal, calculosHidraulicos, liquidacionTurno });
     await nuevoCalculo.save();
 
     return res.status(201).json({ 
@@ -202,10 +213,12 @@ app.post(['/api/calculos', '/api/turnos'], async (req, res) => {
 });
 
 // 3. Eliminar turno (Acepta tanto /api/calculos como /api/turnos)
-app.delete(['/api/calculos/:id', '/api/turnos/:id'], async (req, res) => {
+app.delete(['/api/calculos/:id', '/api/turnos/:id'], requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    await RegistroTurno.findByIdAndDelete(id);
+    if (!mongoose.isValidObjectId(id)) return res.status(400).json({ success: false, message: 'ID inválido' });
+    const deleted = await RegistroTurno.findOneAndDelete({ _id: id, usuarioId: req.userId });
+    if (!deleted) return res.status(404).json({ success: false, message: 'Registro no encontrado' });
     return res.status(200).json({ success: true, message: 'Registro eliminado con éxito.' });
   } catch (error) {
     console.error('Error al eliminar cálculo:', error);
@@ -214,9 +227,9 @@ app.delete(['/api/calculos/:id', '/api/turnos/:id'], async (req, res) => {
 });
 
 // Historial respaldado
-app.get('/api/turnos/historial', async (req, res) => {
+app.get('/api/turnos/historial', requireAuth, async (req, res) => {
   try {
-    const historial = await RegistroTurno.find().sort({ fechaCreacion: -1 }).limit(20);
+    const historial = await RegistroTurno.find({ usuarioId: req.userId }).sort({ fechaCreacion: -1 }).limit(20);
     res.json({ success: true, data: historial });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al obtener el historial.' });
