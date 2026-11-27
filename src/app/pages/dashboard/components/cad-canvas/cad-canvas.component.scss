@@ -81,6 +81,8 @@ $c-gate-closed: #ef4444;
     border: 1px solid #1e293b;
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
 
     .cad-svg {
       width: 100%;
@@ -190,7 +192,7 @@ $c-gate-closed: #ef4444;
         }
       }
 
-      /* TIRADORES CAD ESTABLES SIN TRANSFORM QUE GENEREN BUCLES */
+      /* TIRADORES CAD ESTABLES */
       .cad-handle {
         user-select: none;
 
@@ -201,6 +203,35 @@ $c-gate-closed: #ef4444;
         &:hover {
           filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
         }
+      }
+    }
+
+    /* BARRA INFERIOR DE GUÍA RÁPIDA DE USO */
+    .cad-quick-guide {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.15rem;
+      background: #09121d;
+      color: #94a3b8;
+      font-size: 0.73rem;
+      padding: 0.65rem 1rem;
+      border-top: 1px solid #1e293b;
+      box-sizing: border-box;
+
+      .guide-title {
+        color: #38bdf8;
+        font-weight: 700;
+      }
+
+      strong {
+        color: #f1f5f9;
+      }
+
+      span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
       }
     }
   }

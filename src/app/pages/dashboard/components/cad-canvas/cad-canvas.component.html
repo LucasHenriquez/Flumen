@@ -2,18 +2,28 @@
   <header class="cad-toolbar">
     <div class="toolbar-title">
       <div class="title-with-badge">
-        <h4>Plano Topográfico &bull; Vector CAD</h4>
-        <span class="scale-indicator">Escala 1:1000</span>
+        <h4>Mapa Interactivo de Riego</h4>
+        <span class="scale-indicator">Vista de Terreno</span>
       </div>
-      <p>Lienzo paramétrico vectorial de alta precisión. Arrastre fluido sin saltos de posición.</p>
+      <p>Estira los bordes para cambiar los metros o haz clic en los círculos para abrir y cerrar compuertas.</p>
     </div>
     
     <div class="topographic-legend">
-      <span class="legend-item"><span class="dot-color dot-matriz"></span> Canal Matriz</span>
-      <span class="legend-item"><span class="dot-color dot-regadera"></span> Canaleta (Arrastrar)</span>
-      <span class="legend-item"><span class="dot-color dot-compuerta-on"></span> Abierta</span>
-      <span class="legend-item"><span class="dot-color dot-compuerta-off"></span> Cerrada</span>
-      <span class="legend-item"><span class="dot-color dot-curva"></span> Curvas de Nivel</span>
+      <span class="legend-item" title="Canal principal que trae el agua hacia tu terreno">
+        <span class="dot-color dot-matriz"></span> Acequia Principal
+      </span>
+      <span class="legend-item" title="Líneas de distribución interna; puedes arrastrarlas para moverlas">
+        <span class="dot-color dot-regadera"></span> Canaleta (Arrastrar)
+      </span>
+      <span class="legend-item" title="Paso abierto: el agua está regando el sector">
+        <span class="dot-color dot-compuerta-on"></span> Abierta
+      </span>
+      <span class="legend-item" title="Paso cerrado: el agua está cortada">
+        <span class="dot-color dot-compuerta-off"></span> Cerrada
+      </span>
+      <span class="legend-item" title="Líneas que muestran la inclinación del suelo">
+        <span class="dot-color dot-curva"></span> Desnivel del Suelo
+      </span>
     </div>
   </header>
 
@@ -97,22 +107,22 @@
 
       <!-- Vértices -->
       <g class="vertices-cartograficos" pointer-events="none">
-        <text [attr.x]="geom.x + 10" [attr.y]="geom.y + 16">V1 [0,0]</text>
-        <text [attr.x]="geom.x + geom.w - 110" [attr.y]="geom.y + 16">V2 +{{ anchoM }}m E</text>
-        <text [attr.x]="geom.x + 10" [attr.y]="geom.y + geom.h - 10">V3 +{{ largoM }}m S</text>
-        <text [attr.x]="geom.x + geom.w - 110" [attr.y]="geom.y + geom.h - 10">V4 REF-G104</text>
+        <text [attr.x]="geom.x + 10" [attr.y]="geom.y + 16">Esquina 1 [0,0]</text>
+        <text [attr.x]="geom.x + geom.w - 115" [attr.y]="geom.y + 16">Esquina 2 +{{ anchoM }}m</text>
+        <text [attr.x]="geom.x + 10" [attr.y]="geom.y + geom.h - 10">Esquina 3 +{{ largoM }}m</text>
+        <text [attr.x]="geom.x + geom.w - 115" [attr.y]="geom.y + geom.h - 10">Límite Predio</text>
       </g>
 
       <!-- 4. CURVAS DE NIVEL -->
       <g class="curvas-nivel-group" pointer-events="none">
         <path [attr.d]="curvaNivel(0.28)" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" stroke-dasharray="5,4"/>
-        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.28 - 5" class="topo-cota-txt">Cota +102.5 m</text>
+        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.28 - 5" class="topo-cota-txt">Altura +102.5 m</text>
 
         <path [attr.d]="curvaNivel(0.58)" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" stroke-dasharray="5,4"/>
-        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.58 - 5" class="topo-cota-txt">Cota +101.8 m</text>
+        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.58 - 5" class="topo-cota-txt">Altura +101.8 m</text>
 
         <path [attr.d]="curvaNivel(0.85)" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" stroke-dasharray="5,4"/>
-        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.85 - 5" class="topo-cota-txt">Cota +101.0 m</text>
+        <text [attr.x]="geom.x + 20" [attr.y]="geom.y + geom.h * 0.85 - 5" class="topo-cota-txt">Altura +101.0 m</text>
       </g>
 
       <!-- 5. SUBDIVISIÓN POR CUARTELES -->
@@ -139,7 +149,7 @@
       <!-- 6. CANAL MATRIZ -->
       <g class="canal-matriz-group" 
          (mousedown)="iniciarArrastreCanalMatriz($event)"
-         title="Arrastra para mover el canal matriz">
+         title="Acequia Principal: Haz clic y arrastra para mover su posición en el terreno">
         
         <ng-container *ngIf="ubicacionCanal === 'norte' || ubicacionCanal === 'sur'">
           <rect 
@@ -157,7 +167,7 @@
             text-anchor="middle" 
             class="canal-matriz-text" 
             pointer-events="none">
-            &rarr; ACEQUIA MATRIZ &bull; {{ caudalLps }} L/s &bull; n={{ rugosidadManning }} &rarr;
+            &rarr; ACEQUIA PRINCIPAL &bull; {{ caudalLps }} L/s &rarr;
           </text>
         </ng-container>
 
@@ -173,7 +183,7 @@
           />
           <g [attr.transform]="'translate(' + (canalMatrizPosCalculada + 18) + ',' + (geom.y + (geom.h / 2)) + ') rotate(-90)'" pointer-events="none">
             <text x="0" y="0" text-anchor="middle" class="canal-matriz-text">
-              &rarr; ACEQUIA MATRIZ &bull; {{ caudalLps }} L/s &bull; n={{ rugosidadManning }} &rarr;
+              &rarr; ACEQUIA PRINCIPAL &bull; {{ caudalLps }} L/s &rarr;
             </text>
           </g>
         </ng-container>
@@ -205,7 +215,7 @@
               stroke="transparent" 
               stroke-width="36"
               class="hitbox-drag-v"
-              title="Arrastrar canaleta a los lados"
+              title="Arrastra hacia los lados para reubicar esta canaleta"
               (mousedown)="iniciarArrastreCanaleta(idx, $event)"
             />
 
@@ -219,14 +229,14 @@
                 stroke="#ffffff" 
                 stroke-width="2" 
                 class="compuerta-handle"
-                title="Clic para Abrir / Cerrar"
+                [attr.title]="can.abierta !== false ? 'Paso ABIERTO: Haz clic para cortar el agua' : 'Paso CERRADO: Haz clic para dejar pasar el agua'"
                 (click)="toggleCompuerta(idx, $event)"
               />
             </g>
 
             <!-- Botón Eliminar -->
             <g class="btn-del-group" [attr.transform]="'translate(' + can.posicion + ',' + (geom.y + geom.h + 16) + ')'">
-              <circle r="8.5" class="btn-del-bg" (click)="onEliminarCanaleta(idx, $event)" title="Eliminar canaleta"/>
+              <circle r="8.5" class="btn-del-bg" (click)="onEliminarCanaleta(idx, $event)" title="Quitar esta canaleta"/>
               <text y="3.5" text-anchor="middle" class="txt-x" pointer-events="none">&times;</text>
             </g>
           </g>
@@ -252,6 +262,7 @@
               stroke="transparent" 
               stroke-width="36"
               class="hitbox-drag-h"
+              title="Arrastra arriba o abajo para reubicar esta canaleta"
               (mousedown)="iniciarArrastreCanaleta(idx, $event)"
             />
 
@@ -264,12 +275,13 @@
                 stroke="#ffffff" 
                 stroke-width="2" 
                 class="compuerta-handle"
+                [attr.title]="can.abierta !== false ? 'Paso ABIERTO: Haz clic para cortar el agua' : 'Paso CERRADO: Haz clic para dejar pasar el agua'"
                 (click)="toggleCompuerta(idx, $event)"
               />
             </g>
 
             <g class="btn-del-group" [attr.transform]="'translate(' + (geom.x + geom.w + 16) + ',' + can.posicion + ')'">
-              <circle r="8.5" class="btn-del-bg" (click)="onEliminarCanaleta(idx, $event)"/>
+              <circle r="8.5" class="btn-del-bg" (click)="onEliminarCanaleta(idx, $event)" title="Quitar esta canaleta"/>
               <text y="3.5" text-anchor="middle" class="txt-x" pointer-events="none">&times;</text>
             </g>
           </g>
@@ -290,40 +302,52 @@
       </g>
 
       <!-- 9. BADGE DE PENDIENTE -->
-      <g [attr.transform]="'translate(' + (geom.x + geom.w - 125) + ',' + (geom.y + 14) + ')'" pointer-events="none">
-        <rect width="112" height="26" rx="5" fill="rgba(6, 12, 20, 0.92)" stroke="rgba(255,255,255,0.22)"/>
-        <text x="56" y="17" text-anchor="middle" [attr.fill]="pendientePorc >= 0.05 ? '#38bdf8' : '#f87171'" class="mono-slope">
-          &searr; S = {{ pendientePorc }}%
+      <g [attr.transform]="'translate(' + (geom.x + geom.w - 135) + ',' + (geom.y + 14) + ')'" pointer-events="none">
+        <rect width="122" height="26" rx="5" fill="rgba(6, 12, 20, 0.92)" stroke="rgba(255,255,255,0.22)"/>
+        <text x="61" y="17" text-anchor="middle" [attr.fill]="pendientePorc >= 0.05 ? '#38bdf8' : '#f87171'" class="mono-slope">
+          &searr; Bajada: {{ pendientePorc }}%
         </text>
       </g>
 
-      <!-- 10. TIRADORES DE ESCALA CAD FIJOS AL BORDE PERIMETRAL EXTERIOR -->
-      <!-- Tirador Este (Ancho) montado al costado derecho del borde -->
+      <!-- 10. TIRADORES DE ESCALA FIJOS AL BORDE EXTERIOR -->
+      <!-- Tirador Derecho (Ancho) -->
       <g [attr.transform]="'translate(' + (geom.x + geom.w) + ',' + (geom.y + (geom.h / 2)) + ')'"
          class="cad-handle ew-resize"
-         (mousedown)="iniciarArrastreTerreno('terreno-width', $event)">
+         (mousedown)="iniciarArrastreTerreno('terreno-width', $event)"
+         title="Estirar Ancho: Arrastra a los lados para cambiar los metros de ancho">
         <rect x="0" y="-30" width="24" height="60" fill="transparent" />
         <rect x="2" y="-18" width="6" height="36" rx="3" fill="#38bdf8" stroke="#09121d" stroke-width="1.5" />
         <line x1="5" y1="-8" x2="5" y2="8" stroke="#ffffff" stroke-width="1.5" />
       </g>
 
-      <!-- Tirador Sur (Largo) montado al costado inferior del borde -->
+      <!-- Tirador Inferior (Largo) -->
       <g [attr.transform]="'translate(' + (geom.x + (geom.w / 2)) + ',' + (geom.y + geom.h) + ')'"
          class="cad-handle ns-resize"
-         (mousedown)="iniciarArrastreTerreno('terreno-height', $event)">
+         (mousedown)="iniciarArrastreTerreno('terreno-height', $event)"
+         title="Estirar Largo: Arrastra arriba o abajo para cambiar los metros de largo">
         <rect x="-30" y="0" width="60" height="24" fill="transparent" />
         <rect x="-18" y="2" width="36" height="6" rx="3" fill="#38bdf8" stroke="#09121d" stroke-width="1.5" />
         <line x1="-8" y1="5" x2="8" y2="5" stroke="#ffffff" stroke-width="1.5" />
       </g>
 
-      <!-- Tirador Esquina Sureste (Diagonal) -->
+      <!-- Tirador Esquina (Diagonal) -->
       <g [attr.transform]="'translate(' + (geom.x + geom.w) + ',' + (geom.y + geom.h) + ')'"
          class="cad-handle corner-resize"
-         (mousedown)="iniciarArrastreTerreno('terreno-corner', $event)">
+         (mousedown)="iniciarArrastreTerreno('terreno-corner', $event)"
+         title="Estirar Todo: Arrastra en diagonal para cambiar ancho y largo a la vez">
         <circle cx="0" cy="0" r="18" fill="transparent" />
         <circle cx="0" cy="0" r="7.5" fill="#f59e0b" stroke="#09121d" stroke-width="2" />
         <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
       </g>
     </svg>
+
+    <!-- BARRA INFERIOR DE GUÍA RÁPIDA DE USO -->
+    <div class="cad-quick-guide">
+      <span class="guide-title">💡 <strong>Cómo usar el mapa:</strong></span>
+      <span>🖱️ <strong>Barras Celestes:</strong> Arrastra los bordes derecho o inferior para estirar los metros del terreno.</span>
+      <span>🟢/🔴 <strong>Compuertas:</strong> Haz clic en los círculos para abrir o cortar el agua de cada canaleta.</span>
+      <span>↔️ <strong>Canaletas:</strong> Arrastra las líneas de agua para acomodarlas en el sector.</span>
+      <span>🌊 <strong>Acequia Principal:</strong> Arrastra la barra celeste gruesa para mover por dónde entra el agua.</span>
+    </div>
   </div>
 </div>

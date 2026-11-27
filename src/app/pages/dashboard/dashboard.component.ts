@@ -11,19 +11,45 @@ import { CadCanvasComponent } from './components/cad-canvas/cad-canvas.component
 import { InspectorPanelComponent } from './components/inspector-panel/inspector-panel.component';
 import { TurnosHistoryComponent } from './components/turnos-history/turnos-history.component';
 import { FormsModule } from '@angular/forms';
-
+import { InfoTooltipComponent } from '../../components/info-tooltip/info-tooltip.component';
+import { ClimaService, ZONAS_AGRICOLAS_CHILE } from '../../services/clima.service';
 import * as ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CadCanvasComponent, InspectorPanelComponent,FormsModule , TurnosHistoryComponent],
+  imports: [
+    CommonModule,
+    CadCanvasComponent,
+    InspectorPanelComponent,
+    FormsModule,
+    TurnosHistoryComponent,
+    InfoTooltipComponent
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   sidebarColapsada: boolean = false;
+  sidebarMovilAbierta: boolean = false;
+// Modo de interfaz: 'campo' (guiado 3 pasos) vs 'tecnico' (completo con CAD)
+  modoInterfaz: 'campo' | 'tecnico' = 'tecnico';
+  unidadSuperficieCampo: 'ha' | 'cuadras' = 'ha';
+  valorSuperficieCampo: number = 2.0;
 
+  // Reporte rápido de emergencias / fallas en canal (Manual CNR)
+  mostrarModalIncidencia: boolean = false;
+  incidenciaCanal = {
+    tipo: 'compuerta_trancada',
+    descripcion: ''
+  };
+  incidenciasReportadas: Array<{
+    id: number;
+    fecha: string;
+    predio: string;
+    tipoEtiqueta: string;
+    descripcion: string;
+  }> = [];
   usuario: any = {
     _id: null,
     nombre: 'Regante',
@@ -38,6 +64,49 @@ export class DashboardComponent implements OnInit {
   parcelaLargoM: number = 200;
   superficieHa: number = 2.0;
   numCuarteles: number = 2;
+
+  // Clima Open-Meteo
+  zonasClima = ZONAS_AGRICOLAS_CHILE;
+  zonaClimaSeleccionada: string = 'buin';
+  cargandoClima: boolean = false;
+  climaActual: {
+    zona: string;
+    temp: number;
+    tempMax: number;
+    humedad: number;
+    lluvia48h: number;
+    et0Hoy: number;
+    factorAjusteSugerido: number;
+  } | null = null;
+
+  // Punto 2: Ajuste climático activo
+  ajusteClimaticoAplicado: boolean = false;
+
+  // Punto 3: Métricas de ahorro (Riego Tradicional 48% vs Flumen 85%)
+  ahorroTurnoM3: number = 0;
+  ahorroTurnoCLP: number = 0;
+  volumenTradicionalM3: number = 0;
+
+  // Punto 4: Agenda de Reparto y Detección de Conflictos de Canal
+  mostrarModalAgenda: boolean = false;
+  capacidadMaximaCanalLps: number = 350;
+  nuevoBloqueAgenda = {
+    predio: '',
+    horaInicio: '08:00',
+    caudalSolicitadoLps: 150,
+    duracionHoras: 2
+  };
+  agendaTurnos: Array<{
+    id: number;
+    predio: string;
+    horaInicio: string;
+    horaFin: string;
+    caudalLps: number;
+    duracionHoras: number;
+  }> = [
+    { id: 1, predio: 'Parcela El Almendro - Rol 104-2', horaInicio: '06:00', horaFin: '09:30', caudalLps: 180, duracionHoras: 3.5 },
+    { id: 2, predio: 'Agrícola Santa Rosa - Sector B', horaInicio: '08:00', horaFin: '11:00', caudalLps: 140, duracionHoras: 3.0 }
+  ];
 
   // Cultivo y Topografía
   cultivos = CATALOGO_CULTIVOS_CHILE;
@@ -73,10 +142,20 @@ export class DashboardComponent implements OnInit {
   guardando: boolean = false;
   mensajeAlerta: string = '';
 
+  // Modal de configuración
+  mostrarModalConfig: boolean = false;
+  usuarioEdit: any = {
+    nombre: '',
+    correo: '',
+    ocupacion: 'agricultor_particular',
+    asociacion: ''
+  };
+
   constructor(
     private authService: AuthService,
     private calculoService: CalculoService,
     private turnosService: TurnosService,
+    private climaService: ClimaService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -92,16 +171,76 @@ export class DashboardComponent implements OnInit {
           console.error(e);
         }
       }
+      this.consultarClimaZona();
     }
 
-    this.recalcular();
     this.generarCanaletasPorDefecto();
+    this.recalcular();
     this.cargarHistorial();
   }
 
+  get zonasClimaAgrupadas(): { provincia: string; zonas: typeof ZONAS_AGRICOLAS_CHILE }[] {
+    const grupos: Record<string, typeof ZONAS_AGRICOLAS_CHILE> = {};
+    this.zonasClima.forEach(z => {
+      if (!grupos[z.provincia]) {
+        grupos[z.provincia] = [];
+      }
+      grupos[z.provincia].push(z);
+    });
+    return Object.entries(grupos).map(([provincia, zonas]) => ({
+      provincia,
+      zonas
+    }));
+  }
+
+  consultarClimaZona(): void {
+    const zonaObj = this.zonasClima.find(z => z.id === this.zonaClimaSeleccionada) || this.zonasClima[0];
+    this.cargandoClima = true;
+
+    this.climaService.obtenerPronosticoAgricola(zonaObj.lat, zonaObj.lon).subscribe({
+      next: (res) => {
+        const lluviaHoy = res.daily?.precipitation_sum?.[0] || 0;
+        const lluviaManana = res.daily?.precipitation_sum?.[1] || 0;
+        const lluviaTotal48h = Number((lluviaHoy + lluviaManana).toFixed(1));
+        const et0Hoy = Number((res.daily?.et0_fao_evapotranspiration?.[0] || 0).toFixed(1));
+        const tempMax = Math.round(res.daily?.temperature_2m_max?.[0] || 0);
+
+        let factor = 1.0;
+        if (lluviaTotal48h >= 12) {
+          factor = 0; // Suspender riego por lluvia fuerte
+        } else if (lluviaTotal48h >= 5) {
+          factor = 0.6; // Reducir 40% por lluvia moderada
+        } else if (tempMax >= 33 || et0Hoy >= 6.0) {
+          factor = 1.15; // Aumentar 15% por ola de calor / alta evaporación
+        }
+
+        this.climaActual = {
+          zona: zonaObj.nombre,
+          temp: Math.round(res.current?.temperature_2m || 0),
+          tempMax,
+          humedad: Math.round(res.current?.relative_humidity_2m || 0),
+          lluvia48h: lluviaTotal48h,
+          et0Hoy,
+          factorAjusteSugerido: factor
+        };
+        this.cargandoClima = false;
+        this.recalcular();
+      },
+      error: (err) => {
+        console.warn('No se pudo obtener el pronóstico Open-Meteo:', err);
+        this.cargandoClima = false;
+      }
+    });
+  }
+
+  toggleAjusteClimatico(): void {
+    this.ajusteClimaticoAplicado = !this.ajusteClimaticoAplicado;
+    this.recalcular();
+  }
+
   get cultivoActual(): CultivoConfig {
-    return this.cultivos[this.cultivoKey] || 
-           this.cultivos['palto'] || 
+    return this.cultivos[this.cultivoKey] ||
+           this.cultivos['palto'] ||
            Object.values(this.cultivos)[0];
   }
 
@@ -113,6 +252,58 @@ export class DashboardComponent implements OnInit {
     const h = Math.floor(hPorC);
     const m = Math.round((hPorC - h) * 60);
     return `${h}h ${m < 10 ? '0' + m : m}m / sector`;
+  }
+
+  get diagnosticoHidraulico(): {
+    nivel: 'ok' | 'warning' | 'danger';
+    titulo: string;
+    mensaje: string;
+    accionRecomendada: string;
+  } {
+    const abiertas = this.canaletas.filter(c => c.abierta !== false).length;
+
+    if (this.canaletas.length > 0 && abiertas === 0) {
+      return {
+        nivel: 'danger',
+        titulo: 'Paso de Agua Totalmente Cerrado',
+        mensaje: 'Todas las compuertas están cerradas (0 L/s ingresando al terreno).',
+        accionRecomendada: 'Haz clic en al menos un círculo rojo en el mapa para abrir el paso del agua.'
+      };
+    }
+
+    if (this.rugosidadManning >= 0.025 && this.velocidadAgua > 1.2) {
+      return {
+        nivel: 'danger',
+        titulo: `Alerta de Erosión en Canal de Tierra (${this.velocidadAgua} m/s)`,
+        mensaje: 'El agua baja con demasiada fuerza para un canal sin cemento y puede socavar los bordes o arrastrar barro.',
+        accionRecomendada: 'Reduce la inclinación o regula la entrada en la compuerta matriz.'
+      };
+    }
+
+    if (this.froude > 1.0) {
+      return {
+        nivel: 'warning',
+        titulo: `Flujo Rápido / Turbulento (Froude: ${this.froude})`,
+        mensaje: 'El agua corre en régimen acelerado; puede generar oleaje o desbordes al chocar con las compuertas.',
+        accionRecomendada: 'Vigila el nivel del borde libre en las canaletas secundarias.'
+      };
+    }
+
+    if (this.pendientePorc < 0.05 || this.velocidadAgua < 0.3) {
+      return {
+        nivel: 'warning',
+        titulo: `Bajada Muy Suave (${this.velocidadAgua} m/s)`,
+        mensaje: 'El agua avanza lento. Existe riesgo de acumulación de hojas, tierra o embancamiento en el fondo.',
+        accionRecomendada: 'Mantén limpia la acequia de malezas antes de iniciar el turno.'
+      };
+    }
+
+    return {
+      nivel: 'ok',
+      titulo: `Flujo Estable y Seguro (${this.velocidadAgua} m/s)`,
+      mensaje: `Velocidad ideal sin riesgo de erosión ni desborde. Régimen ${this.regimen.toLowerCase()} controlado.`,
+      accionRecomendada: `Mantén abiertas ${abiertas} de ${this.canaletas.length} canaletas durante ${this.horasTurno}h ${this.minutosTurno}m.`
+    };
   }
 
   asignarEtiquetaOcupacion(ocupacion: string): void {
@@ -167,13 +358,27 @@ export class DashboardComponent implements OnInit {
 
   onCanaletasChange(nuevasCanaletas: CanaletaSecundaria[]): void {
     this.canaletas = nuevasCanaletas;
+    this.recalcular();
   }
 
   recalcular(): void {
     const cultivo = this.cultivoActual;
     if (!cultivo) return;
 
-    this.volumenObjetivoM3 = Math.round(this.superficieHa * cultivo.laminaMm * 10);
+    // Volumen base agronómico (eficiencia tecnificada/aforada ~85%)
+    const volumenBaseM3 = this.superficieHa * cultivo.laminaMm * 10;
+
+    // Punto 2: Aplicar factor climático si el usuario activó la recomendación
+    const factorClima = (this.ajusteClimaticoAplicado && this.climaActual)
+      ? this.climaActual.factorAjusteSugerido
+      : 1.0;
+
+    this.volumenObjetivoM3 = Math.round(volumenBaseM3 * factorClima);
+
+    // Punto 3: Comparativa vs Riego Tradicional sin aforo ("al ojo", eficiencia ~48%)
+    this.volumenTradicionalM3 = Math.round(volumenBaseM3 * (0.85 / 0.48));
+    this.ahorroTurnoM3 = Math.max(0, this.volumenTradicionalM3 - this.volumenObjetivoM3);
+    this.ahorroTurnoCLP = Math.round(this.ahorroTurnoM3 * this.tarifaM3CLP);
 
     const b = Number(this.anchoBase);
     const y = Number(this.tiranteCm) / 100;
@@ -185,18 +390,24 @@ export class DashboardComponent implements OnInit {
     const perimetro = b + 2 * y;
     const radioH = perimetro > 0 ? area / perimetro : 0;
     const velocidad = radioH > 0 && n > 0 ? (1 / n) * Math.pow(radioH, 2 / 3) * Math.pow(S, 1 / 2) : 0;
-    const caudal = area * velocidad;
+    const caudalMatriz = area * velocidad;
+
+    const totalCanaletas = this.canaletas.length;
+    const abiertas = this.canaletas.filter(c => c.abierta !== false).length;
+    const factorCaudal = totalCanaletas > 0 ? (abiertas / totalCanaletas) : 1;
+
+    const caudalEfectivo = caudalMatriz * factorCaudal;
 
     this.radioHidraulico = parseFloat(radioH.toFixed(3));
     this.velocidadAgua = parseFloat(velocidad.toFixed(2));
-    this.caudalM3s = parseFloat(caudal.toFixed(3));
-    this.caudalLps = Math.round(caudal * 1000);
+    this.caudalM3s = parseFloat(caudalEfectivo.toFixed(3));
+    this.caudalLps = Math.round(caudalEfectivo * 1000);
 
     this.froude = y > 0 ? parseFloat((velocidad / Math.sqrt(g * y)).toFixed(2)) : 0;
     this.regimen = this.froude > 1.03 ? 'Supercrítico' : 'Subcrítico';
 
-    if (caudal > 0) {
-      this.tiempoTotalHoras = (this.volumenObjetivoM3 / caudal) / 3600;
+    if (caudalEfectivo > 0 && this.volumenObjetivoM3 > 0) {
+      this.tiempoTotalHoras = (this.volumenObjetivoM3 / caudalEfectivo) / 3600;
       this.horasTurno = Math.floor(this.tiempoTotalHoras);
       this.minutosTurno = Math.round((this.tiempoTotalHoras - this.horasTurno) * 60);
       if (this.minutosTurno === 60) {
@@ -204,6 +415,7 @@ export class DashboardComponent implements OnInit {
         this.minutosTurno = 0;
       }
     } else {
+      this.tiempoTotalHoras = 0;
       this.horasTurno = 0;
       this.minutosTurno = 0;
     }
@@ -236,15 +448,18 @@ export class DashboardComponent implements OnInit {
       posicion: span + this.canaletas.length * 30,
       abierta: true
     });
+    this.recalcular();
   }
 
   onEliminarCanaletaChild(index: number): void {
     this.canaletas.splice(index, 1);
+    this.recalcular();
   }
 
   onConmutarOrientacion(): void {
     this.orientacionRegaderas = this.orientacionRegaderas === 'vertical' ? 'horizontal' : 'vertical';
     this.generarCanaletasPorDefecto();
+    this.recalcular();
   }
 
   imprimirComprobanteTurno(): void {
@@ -456,7 +671,7 @@ export class DashboardComponent implements OnInit {
     wsResumen.views = [{ showGridLines: true }];
 
     wsResumen.columns = [
-      { width: 22 }, { width: 22 }, { width: 22 }, 
+      { width: 22 }, { width: 22 }, { width: 22 },
       { width: 22 }, { width: 22 }, { width: 22 }, { width: 22 }
     ];
 
@@ -568,8 +783,8 @@ export class DashboardComponent implements OnInit {
       row.height = 20;
 
       const isEven = idx % 2 === 0;
-      const rowFill: ExcelJS.Fill = isEven 
-        ? { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } } 
+      const rowFill: ExcelJS.Fill = isEven
+        ? { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } }
         : { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF' } };
 
       row.eachCell((cell, colIndex) => {
@@ -610,14 +825,13 @@ export class DashboardComponent implements OnInit {
     // Generación del archivo .xlsx nativo
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    
-    // Asignación con tipo MIME exacto para evitar bloqueos
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = `FLUMEN_Reporte_Ejecutivo_${new Date().toISOString().slice(0, 10)}.xlsx`;
     link.click();
-    
+
     setTimeout(() => URL.revokeObjectURL(url), 100);
   }
 
@@ -626,50 +840,223 @@ export class DashboardComponent implements OnInit {
       document.getElementById('sec-historial')?.scrollIntoView({ behavior: 'smooth' });
     }
   }
-  // Agrega estas variables dentro de la clase DashboardComponent:
-mostrarModalConfig: boolean = false;
-usuarioEdit: any = {
-  nombre: '',
-  correo: '',
-  ocupacion: 'agricultor_particular',
-  asociacion: ''
-};
 
-// Modifica o añade estos métodos dentro de la clase:
-abrirModalConfig(): void {
-  this.usuarioEdit = {
-    nombre: this.usuario.nombre || 'Regante',
-    correo: this.usuario.correo || '',
-    ocupacion: this.usuario.ocupacion || 'agricultor_particular',
-    asociacion: this.usuario.asociacion || 'Canalistas Zona Central'
-  };
-  this.mostrarModalConfig = true;
-}
-
-cerrarModalConfig(): void {
-  this.mostrarModalConfig = false;
-}
-
-guardarConfigUsuario(): void {
-  this.usuario = {
-    ...this.usuario,
-    nombre: this.usuarioEdit.nombre.trim(),
-    correo: this.usuarioEdit.correo.trim(),
-    ocupacion: this.usuarioEdit.ocupacion,
-    asociacion: this.usuarioEdit.asociacion.trim()
-  };
-
-  this.asignarEtiquetaOcupacion(this.usuario.ocupacion);
-
-  if (isPlatformBrowser(this.platformId)) {
-    localStorage.setItem('flumen_user', JSON.stringify(this.usuario));
+  // Punto 4: Agenda de Reparto y Detección de Conflictos
+  abrirModalAgenda(): void {
+    this.nuevoBloqueAgenda = {
+      predio: this.nombrePredio,
+      horaInicio: '09:00',
+      caudalSolicitadoLps: this.caudalLps || 150,
+      duracionHoras: Number(Math.max(0.5, this.tiempoTotalHoras).toFixed(1))
+    };
+    this.mostrarModalAgenda = true;
   }
 
-  this.mensajeAlerta = '✓ Perfil de regante actualizado correctamente.';
-  setTimeout(() => this.mensajeAlerta = '', 3000);
-  this.cerrarModalConfig();
-}
+  cerrarModalAgenda(): void {
+    this.mostrarModalAgenda = false;
+  }
 
+  private horaAMinutos(hora: string): number {
+    const [h, m] = hora.split(':').map(Number);
+    return (h || 0) * 60 + (m || 0);
+  }
+
+  private minutosAHora(totalMin: number): string {
+    const minDia = ((Math.round(totalMin) % 1440) + 1440) % 1440;
+    const h = Math.floor(minDia / 60);
+    const m = minDia % 60;
+    return `${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}`;
+  }
+
+  agregarBloqueAgenda(): void {
+    if (!this.nuevoBloqueAgenda.predio.trim()) return;
+    const inicioMin = this.horaAMinutos(this.nuevoBloqueAgenda.horaInicio);
+    const finMin = inicioMin + Math.round(this.nuevoBloqueAgenda.duracionHoras * 60);
+
+    this.agendaTurnos.push({
+      id: Date.now(),
+      predio: this.nuevoBloqueAgenda.predio.trim(),
+      horaInicio: this.nuevoBloqueAgenda.horaInicio,
+      horaFin: this.minutosAHora(finMin),
+      caudalLps: Number(this.nuevoBloqueAgenda.caudalSolicitadoLps),
+      duracionHoras: Number(this.nuevoBloqueAgenda.duracionHoras)
+    });
+
+    this.agendaTurnos.sort((a, b) => this.horaAMinutos(a.horaInicio) - this.horaAMinutos(b.horaInicio));
+  }
+
+  eliminarBloqueAgenda(id: number): void {
+    this.agendaTurnos = this.agendaTurnos.filter(t => t.id !== id);
+  }
+
+  get analisisConflictosCanal(): {
+    hayConflicto: boolean;
+    picoCaudalLps: number;
+    franjaCritica: string;
+  } {
+    let pico = 0;
+    let franja = '';
+
+    for (const turno of this.agendaTurnos) {
+      const iniA = this.horaAMinutos(turno.horaInicio);
+      const finA = iniA + Math.round(turno.duracionHoras * 60);
+
+      let caudalSimultaneo = 0;
+      for (const otro of this.agendaTurnos) {
+        const iniB = this.horaAMinutos(otro.horaInicio);
+        const finB = iniB + Math.round(otro.duracionHoras * 60);
+
+        if (iniA < finB && finA > iniB) {
+          caudalSimultaneo += otro.caudalLps;
+        }
+      }
+
+      if (caudalSimultaneo > pico) {
+        pico = caudalSimultaneo;
+        franja = `${turno.horaInicio} - ${turno.horaFin}`;
+      }
+    }
+
+    return {
+      hayConflicto: pico > this.capacidadMaximaCanalLps,
+      picoCaudalLps: pico,
+      franjaCritica: franja
+    };
+  }
+
+  // Modal de Configuración de Usuario
+  abrirModalConfig(): void {
+    this.usuarioEdit = {
+      nombre: this.usuario.nombre || 'Regante',
+      correo: this.usuario.correo || '',
+      ocupacion: this.usuario.ocupacion || 'agricultor_particular',
+      asociacion: this.usuario.asociacion || 'Canalistas Zona Central'
+    };
+    this.mostrarModalConfig = true;
+  }
+
+  cerrarModalConfig(): void {
+    this.mostrarModalConfig = false;
+  }
+
+  guardarConfigUsuario(): void {
+    this.usuario = {
+      ...this.usuario,
+      nombre: this.usuarioEdit.nombre.trim(),
+      correo: this.usuarioEdit.correo.trim(),
+      ocupacion: this.usuarioEdit.ocupacion,
+      asociacion: this.usuarioEdit.asociacion.trim()
+    };
+
+    this.asignarEtiquetaOcupacion(this.usuario.ocupacion);
+
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('flumen_user', JSON.stringify(this.usuario));
+    }
+
+    this.mensajeAlerta = '✓ Perfil de regante actualizado correctamente.';
+    setTimeout(() => this.mensajeAlerta = '', 3000);
+    this.cerrarModalConfig();
+  }
+  cambiarModoInterfaz(modo: 'campo' | 'tecnico'): void {
+    this.modoInterfaz = modo;
+    if (modo === 'campo') {
+      this.unidadSuperficieCampo = 'ha';
+      this.valorSuperficieCampo = this.superficieHa;
+    }
+  }
+
+  seleccionarCultivoRapido(key: string): void {
+    this.cultivoKey = key;
+    this.recalcular();
+  }
+
+  ajustarSuperficieCampo(valor: number, unidad: 'ha' | 'cuadras'): void {
+    this.unidadSuperficieCampo = unidad;
+    this.valorSuperficieCampo = Math.max(0.1, Number(valor) || 0.5);
+
+    // 1 cuadra chilena = 1.5625 hectáreas
+    const hectareas = unidad === 'cuadras'
+      ? this.valorSuperficieCampo * 1.5625
+      : this.valorSuperficieCampo;
+
+    this.superficieHa = Number(hectareas.toFixed(2));
+    const ladoAprox = Math.round(Math.sqrt(this.superficieHa * 10000));
+    this.parcelaAnchoM = ladoAprox;
+    this.parcelaLargoM = ladoAprox;
+    this.recalcular();
+  }
+
+  escucharInstruccionVoz(): void {
+    if (!isPlatformBrowser(this.platformId) || !('speechSynthesis' in window)) {
+      alert('Tu navegador no soporta lectura por voz.');
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const climaTexto = this.climaActual
+      ? (this.climaActual.lluvia48h >= 12
+          ? 'Atención: se pronostican lluvias fuertes, se recomienda postergar el riego.'
+          : `El clima en ${this.climaActual.zona.split('(')[0]} está despejado con ${this.climaActual.temp} grados.`)
+      : '';
+
+    const texto = `Instrucción de riego Flumen para ${this.nombrePredio}. ` +
+      `Para regar ${this.superficieHa} hectáreas de ${this.cultivoActual.nombre}, ` +
+      `debes abrir tu compuerta durante ${this.horasTurno} horas y ${this.minutosTurno} minutos. ` +
+      `El costo estimado del turno es de ${this.costoTotalCLP} pesos. ${climaTexto}`;
+
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-CL';
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  enviarOrdenWhatsApp(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const mensaje =
+      `*ORDEN DE RIEGO - SISTEMA FLUMEN*\n` +
+      `📍 *Predio:* ${this.nombrePredio}\n` +
+      `👤 *Regante:* ${this.usuario.nombre}\n` +
+      `🌱 *Cultivo:* ${this.cultivoActual.nombre} (${this.superficieHa} Ha)\n` +
+      `⏱️ *Abrir compuerta:* ${this.horasTurno}h ${this.minutosTurno}m (${this.tiempoPorCuartelStr})\n` +
+      `💧 *Caudal:* ${this.caudalLps} L/s | *Volumen:* ${this.volumenObjetivoM3.toLocaleString('es-CL')} m³\n` +
+      `💰 *Valor estimado:* $${this.costoTotalCLP.toLocaleString('es-CL')} CLP`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  }
+
+  abrirModalIncidencia(): void {
+    this.incidenciaCanal = { tipo: 'compuerta_trancada', descripcion: '' };
+    this.mostrarModalIncidencia = true;
+  }
+
+  cerrarModalIncidencia(): void {
+    this.mostrarModalIncidencia = false;
+  }
+
+  registrarIncidenciaCanal(): void {
+    const etiquetas: Record<string, string> = {
+      compuerta_trancada: 'Compuerta trancada o dañada',
+      canal_obstruido: 'Canal tapado con ramas, basura o barro',
+      sin_agua: 'Canal viene seco / falta de dotación',
+      desborde_rotura: 'Desborde o derrumbe de borde en acequia'
+    };
+
+    this.incidenciasReportadas.unshift({
+      id: Date.now(),
+      fecha: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+      predio: this.nombrePredio,
+      tipoEtiqueta: etiquetas[this.incidenciaCanal.tipo] || 'Alerta en canal',
+      descripcion: this.incidenciaCanal.descripcion.trim() || 'Sin observaciones adicionales'
+    });
+
+    this.mensajeAlerta = '🚨 Aviso registrado para el Celador y la Asociación de Canalistas.';
+    setTimeout(() => this.mensajeAlerta = '', 4000);
+    this.cerrarModalIncidencia();
+  }
   cerrarSesion(): void {
     this.authService.cerrarSesion();
     this.router.navigate(['/login']);

@@ -236,7 +236,6 @@ export class CadCanvasComponent {
         nuevoLargo = Math.max(20, Math.min(this.MAX_M_LARGO, nuevoLargo));
       }
 
-      // Emite cuando hay desplazamiento real mayor o igual a 2 metros
       if (Math.abs(nuevoAncho - this.anchoM) >= 2 || Math.abs(nuevoLargo - this.largoM) >= 2) {
         this.dimensionesChange.emit({ ancho: nuevoAncho, largo: nuevoLargo });
         this.cdr.markForCheck();
@@ -257,9 +256,14 @@ export class CadCanvasComponent {
   toggleCompuerta(index: number, event: MouseEvent): void {
     event.stopPropagation();
     event.preventDefault();
-    if (this.canaletas[index]) {
-      this.canaletas[index].abierta = !this.canaletas[index].abierta;
-      this.canaletasChange.emit([...this.canaletas]);
+    const actual = this.canaletas[index];
+    if (actual) {
+      const estaAbierta = actual.abierta !== false;
+      const actualizadas = this.canaletas.map((item, idx) =>
+        idx === index ? { ...item, abierta: !estaAbierta } : item
+      );
+      this.canaletas = actualizadas;
+      this.canaletasChange.emit(actualizadas);
       this.cdr.markForCheck();
     }
   }

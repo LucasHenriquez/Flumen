@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UbicacionCanal } from '../../models/dashboard.models';
 import { CATALOGO_CULTIVOS_CHILE, CultivoExtendido } from '../../data/cultivos.data';
+import { InfoTooltipComponent } from '../../../../components/info-tooltip/info-tooltip.component';
 
 @Component({
   selector: 'app-inspector-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, InfoTooltipComponent],
   templateUrl: './inspector-panel.component.html',
   styleUrls: ['./inspector-panel.component.scss']
 })
@@ -36,6 +37,23 @@ export class InspectorPanelComponent {
 
   get cultivoSeleccionado(): CultivoExtendido {
     return this.catalogos[this.cultivoKey] || this.catalogos['palto'] || Object.values(this.catalogos)[0];
+  }
+
+  get gruposCultivos(): { subcategoria: string; items: { key: string; data: CultivoExtendido }[] }[] {
+    const grupos: Record<string, { key: string; data: CultivoExtendido }[]> = {};
+
+    Object.entries(this.catalogos).forEach(([key, data]) => {
+      const grupo = data.subcategoria || 'Otros Cultivos';
+      if (!grupos[grupo]) {
+        grupos[grupo] = [];
+      }
+      grupos[grupo].push({ key, data });
+    });
+
+    return Object.entries(grupos).map(([subcategoria, items]) => ({
+      subcategoria,
+      items
+    }));
   }
 
   emitirCambios(): void {

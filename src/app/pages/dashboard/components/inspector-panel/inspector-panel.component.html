@@ -3,7 +3,7 @@
   <header class="inspector-header">
     <div class="header-main">
       <div class="title-group">
-        <h3>Configuración</h3>
+        <h3>Datos de tu Riego</h3>
         <span class="badge-role">{{ cultivoSeleccionado.subcategoria || 'Cultivo' }}</span>
       </div>
       <span class="badge-sub">{{ cultivoSeleccionado.icono }} {{ cultivoSeleccionado.nombre }}</span>
@@ -15,36 +15,68 @@
         class="tab-btn" 
         [class.active]="tabActiva === 'agronomico'" 
         (click)="tabActiva = 'agronomico'">
-        🌱 Agronomía & Predio
+        🌱 Cultivo y Terreno
       </button>
       <button 
         type="button" 
         class="tab-btn" 
         [class.active]="tabActiva === 'hidraulica'" 
         (click)="tabActiva = 'hidraulica'">
-        💧 Aforo & Canal
+        💧 Canal y Compuertas
       </button>
     </div>
   </header>
 
-  <!-- FICHA TÉCNICA DINÁMICA RESUMIDA -->
+  <!-- FICHA TÉCNICA RESUMIDA EN LENGUAJE CLARO -->
   <div class="crop-tech-card">
     <div class="tech-metric">
-      <span class="metric-label">Demanda Anual</span>
+      <span class="metric-label">
+        Consumo al Año
+        <app-info-tooltip 
+          titulo="Agua Total en la Temporada" 
+          texto="Cantidad de agua que gasta una hectárea de esta plantación durante todo el año." 
+          ejemplo="9.000 m³/ha al año">
+        </app-info-tooltip>
+      </span>
       <strong class="metric-val text-blue">{{ cultivoSeleccionado.demandaAnualM3Ha }}</strong>
     </div>
+
     <div class="tech-metric">
-      <span class="metric-label">Lámina / Turno</span>
+      <span class="metric-label">
+        Agua por Riego
+        <app-info-tooltip 
+          titulo="Lámina de Riego" 
+          texto="Cantidad de agua que necesita recibir la tierra cada vez que abres la compuerta." 
+          ejemplo="52 mm = 520 mil litros por hectárea">
+        </app-info-tooltip>
+      </span>
       <strong class="metric-val text-green">{{ cultivoSeleccionado.laminaMm }} mm</strong>
     </div>
+
     <div class="tech-metric">
-      <span class="metric-label">Factor Kc</span>
+      <span class="metric-label">
+        Nivel de Consumo
+        <app-info-tooltip 
+          titulo="Factor de Exigencia (Kc)" 
+          texto="Indica qué tan sedienta es esta planta. Mientras más alto el número, más agua pide." 
+          ejemplo="1.05 = Planta muy exigente">
+        </app-info-tooltip>
+      </span>
       <strong class="metric-val">{{ cultivoSeleccionado.kc }}</strong>
     </div>
+
     <div class="tech-metric">
-      <span class="metric-label">Frecuencia</span>
-      <strong class="metric-val">c/{{ cultivoSeleccionado.frecuenciaDias }} d</strong>
+      <span class="metric-label">
+        Cada Cuánto
+        <app-info-tooltip 
+          titulo="Frecuencia de Riego" 
+          texto="Días que debes esperar en verano entre un riego y el siguiente." 
+          ejemplo="Regar cada 6 días">
+        </app-info-tooltip>
+      </span>
+      <strong class="metric-val">c/{{ cultivoSeleccionado.frecuenciaDias }} días</strong>
     </div>
+
     <div class="tech-strategy" *ngIf="cultivoSeleccionado.estrategiaRiego">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"></circle>
@@ -55,158 +87,188 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 1: AGRONOMÍA Y GEOMETRÍA -->
+  <!-- PESTAÑA 1: CULTIVO Y TERRENO -->
   <div class="tab-content" *ngIf="tabActiva === 'agronomico'">
     <div class="form-group">
-      <label for="select-cultivo">Especie & Demanda (INIA / CNR)</label>
+      <label for="select-cultivo">
+        ¿Qué vas a regar?
+        <app-info-tooltip 
+          titulo="Selección de Cultivo" 
+          texto="Elige tu plantación. El sistema ajustará automáticamente cuánta agua necesita según los estándares agrícolas de Chile (INIA)." 
+          ejemplo="Palto Hass, Cerezo, Tomate">
+        </app-info-tooltip>
+      </label>
       <select id="select-cultivo" [(ngModel)]="cultivoKey" (change)="cambiarCultivo()">
-        <optgroup label="🍒 Frutales de Carozo y Pomáceas">
-          <option value="cerezo">🍒 Cerezo (6.500 - 8.200 m³/ha) &bull; 45 mm (Kc: 0.95)</option>
-          <option value="manzano">🍎 Manzano (7.500 - 9.500 m³/ha) &bull; 50 mm (Kc: 0.90)</option>
-          <option value="ciruelo">🟣 Ciruelo (6.000 - 7.000 m³/ha) &bull; 42 mm (Kc: 0.85)</option>
-          <option value="duraznero">🍑 Duraznero / Nectarino (7.500 - 8.500 m³/ha) &bull; 48 mm (Kc: 0.90)</option>
-          <option value="pera">🍐 Peral (7.000 - 9.000 m³/ha) &bull; 46 mm (Kc: 0.88)</option>
-          <option value="damasco">🟠 Damasco (6.000 - 7.500 m³/ha) &bull; 40 mm (Kc: 0.82)</option>
-        </optgroup>
-
-        <optgroup label="🌰 Frutos Secos">
-          <option value="nogal">🌰 Nogal Chandler (9.500 - 11.000 m³/ha) &bull; 58 mm (Kc: 1.05)</option>
-          <option value="avellano">🌰 Avellano Europeo (6.500 - 8.000 m³/ha) &bull; 50 mm (Kc: 0.95)</option>
-          <option value="almendro">🟤 Almendro (6.000 - 7.500 m³/ha) &bull; 44 mm (Kc: 0.80)</option>
-        </optgroup>
-
-        <optgroup label="🫐 Berries y Frutos Pequeños">
-          <option value="arandano">🫐 Arándano (4.500 - 6.000 m³/ha) &bull; 32 mm (Kc: 0.88)</option>
-          <option value="frambuesa">🍇 Frambuesa / Mora (4.000 - 5.500 m³/ha) &bull; 30 mm (Kc: 0.82)</option>
-          <option value="frutilla">🍓 Frutilla en Camellón (5.000 - 7.000 m³/ha) &bull; 35 mm (Kc: 0.85)</option>
-        </optgroup>
-
-        <optgroup label="🍊 Cítricos, Tropicales y Vides">
-          <option value="citricos">🍊 Cítricos / Limoneros (7.500 - 10.500 m³/ha) &bull; 48 mm (Kc: 0.80)</option>
-          <option value="palto">🥑 Palto Hass (9.000 - 11.000 m³/ha) &bull; 52 mm (Kc: 0.85)</option>
-          <option value="olivo">🫒 Olivo (4.000 - 6.000 m³/ha) &bull; 28 mm (Kc: 0.60)</option>
-          <option value="kiwi">🥝 Kiwi Hayward (8.500 - 10.000 m³/ha) &bull; 55 mm (Kc: 1.00)</option>
-          <option value="uva_mesa">🍇 Uva de Mesa (6.500 - 8.000 m³/ha) &bull; 42 mm (Kc: 0.80)</option>
-          <option value="uva_vinifera">🍷 Uva Vinífera (3.500 - 5.000 m³/ha) &bull; 26 mm (Kc: 0.62)</option>
-          <option value="tuna">🌵 Tuna Zonas Áridas (1.500 - 3.000 m³/ha) &bull; 18 mm (Kc: 0.35)</option>
-        </optgroup>
-
-        <optgroup label="🍅 Hortalizas de Fruto">
-          <option value="tomate">🍅 Tomate (5.500 - 7.000 m³/ha) &bull; 36 mm (Kc: 1.05)</option>
-          <option value="choclo">🌽 Choclo Dulce (5.000 - 6.500 m³/ha) &bull; 45 mm (Kc: 1.15)</option>
-          <option value="zapallo">🎃 Zapallo (4.000 - 5.500 m³/ha) &bull; 38 mm (Kc: 0.95)</option>
-          <option value="pimenton">🫑 Pimentón / Ají (5.000 - 6.500 m³/ha) &bull; 36 mm (Kc: 1.00)</option>
-          <option value="pepino">🥒 Pepino / Berenjena (4.500 - 5.500 m³/ha) &bull; 34 mm (Kc: 0.98)</option>
-        </optgroup>
-
-        <optgroup label="🥬 Hortalizas de Hoja y Crucíferas">
-          <option value="lechuga">🥬 Lechuga (2.000 - 3.500 m³/ha) &bull; 24 mm (Kc: 0.95)</option>
-          <option value="esparrago">🌱 Espárrago Verde (6.500 - 8.000 m³/ha) &bull; 46 mm (Kc: 0.95)</option>
-          <option value="alcachofa">🌿 Alcachofa (5.000 - 6.500 m³/ha) &bull; 42 mm (Kc: 0.90)</option>
-          <option value="acelga">🍃 Acelga / Espinaca (2.500 - 4.000 m³/ha) &bull; 26 mm (Kc: 0.92)</option>
-          <option value="cruciferas">🥦 Brócoli / Coliflor (4.000 - 5.500 m³/ha) &bull; 35 mm (Kc: 0.98)</option>
-        </optgroup>
-
-        <optgroup label="🧅 Bulbos, Raíces y Leguminosas">
-          <option value="cebolla">🧅 Cebolla (4.500 - 6.000 m³/ha) &bull; 35 mm (Kc: 1.00)</option>
-          <option value="zanahoria">🥕 Zanahoria (4.000 - 5.500 m³/ha) &bull; 32 mm (Kc: 0.95)</option>
-          <option value="papa">🥔 Papa (5.000 - 6.500 m³/ha) &bull; 40 mm (Kc: 1.10)</option>
-          <option value="ajo">🧄 Ajo (2.500 - 4.000 m³/ha) &bull; 28 mm (Kc: 0.85)</option>
-          <option value="poroto">🫘 Poroto Verde / Granado (3.500 - 5.000 m³/ha) &bull; 32 mm (Kc: 0.95)</option>
-          <option value="haba_arveja">🫛 Haba / Arveja (2.500 - 4.000 m³/ha) &bull; 28 mm (Kc: 0.88)</option>
+        <optgroup *ngFor="let grupo of gruposCultivos" [label]="grupo.subcategoria">
+          <option *ngFor="let item of grupo.items" [value]="item.key">
+            {{ item.data.icono }} {{ item.data.nombre }} &bull; {{ item.data.laminaMm }} mm
+          </option>
         </optgroup>
       </select>
     </div>
 
     <div class="form-group">
-      <label>Predio / Rol Matriz</label>
-      <input type="text" [(ngModel)]="nombrePredio" (ngModelChange)="emitirCambios()" placeholder="Ej: Rol 1420-5" />
+      <label>
+        Nombre del Campo o Rol
+        <app-info-tooltip 
+          titulo="Identificación del Predio" 
+          texto="Escribe el nombre de tu parcela o el número de Rol para que aparezca en el comprobante impreso." 
+          ejemplo="Parcela Los Aromos - Rol 1420-5">
+        </app-info-tooltip>
+      </label>
+      <input type="text" [(ngModel)]="nombrePredio" (ngModelChange)="emitirCambios()" placeholder="Ej: Parcela 4 - Sector Norte" />
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>Ancho (m)</label>
+        <label>
+          Ancho del Campo (m)
+          <app-info-tooltip 
+            titulo="Medida de Frente" 
+            texto="Cuántos metros mide el frente de tu terreno. También puedes estirarlo directo en el dibujo." 
+            ejemplo="100 metros">
+          </app-info-tooltip>
+        </label>
         <input type="number" [(ngModel)]="anchoM" (input)="emitirCambios()" min="20" max="1500" step="5" />
       </div>
+
       <div class="form-group">
-        <label>Largo (m)</label>
+        <label>
+          Largo del Campo (m)
+          <app-info-tooltip 
+            titulo="Medida de Fondo" 
+            texto="Cuántos metros de largo tienen las hileras desde donde entra el agua hasta el final." 
+            ejemplo="200 metros">
+          </app-info-tooltip>
+        </label>
         <input type="number" [(ngModel)]="largoM" (input)="emitirCambios()" min="20" max="2500" step="5" />
       </div>
     </div>
 
     <div class="surface-summary">
-      <span>Superficie: <strong>{{ superficieHa }} Ha</strong></span>
+      <span>Tamaño Total: <strong>{{ superficieHa }} Hectáreas</strong></span>
       <span class="surface-m2">{{ (superficieHa * 10000) | number:'1.0-0' }} m²</span>
     </div>
 
     <div class="form-group">
-      <label>Sectores de Turno</label>
+      <label>
+        Dividir Riego por Sectores
+        <app-info-tooltip 
+          titulo="Riego por Partes (Cuarteles)" 
+          texto="Si el agua del canal no alcanza para regar todo junto, divide el terreno en partes para regar primero una y luego la otra." 
+          ejemplo="2 Sectores = regar mitad y mitad">
+        </app-info-tooltip>
+      </label>
       <div class="cuarteles-toggle">
-        <button type="button" [class.active]="numCuarteles === 1" (click)="cambiarCuarteles(1)">1 Lote</button>
-        <button type="button" [class.active]="numCuarteles === 2" (click)="cambiarCuarteles(2)">2 Sectores</button>
-        <button type="button" [class.active]="numCuarteles === 4" (click)="cambiarCuarteles(4)">4 Sectores</button>
-        <button type="button" [class.active]="numCuarteles === 6" (click)="cambiarCuarteles(6)">6 Sectores</button>
+        <button type="button" [class.active]="numCuarteles === 1" (click)="cambiarCuarteles(1)">Todo junto</button>
+        <button type="button" [class.active]="numCuarteles === 2" (click)="cambiarCuarteles(2)">2 Partes</button>
+        <button type="button" [class.active]="numCuarteles === 4" (click)="cambiarCuarteles(4)">4 Partes</button>
+        <button type="button" [class.active]="numCuarteles === 6" (click)="cambiarCuarteles(6)">6 Partes</button>
       </div>
     </div>
   </div>
 
-  <!-- PESTAÑA 2: INFRAESTRUCTURA HIDRÁULICA Y AFORO -->
+  <!-- PESTAÑA 2: CANAL Y COMPUERTAS -->
   <div class="tab-content" *ngIf="tabActiva === 'hidraulica'">
     <div class="form-group">
-      <label>Entrada Matriz</label>
+      <label>
+        ¿Por qué lado entra el agua?
+        <app-info-tooltip 
+          titulo="Ubicación de la Acequia Principal" 
+          texto="Elige por qué borde de tu terreno pasa el canal que alimenta el riego." 
+          ejemplo="Norte (borde de arriba)">
+        </app-info-tooltip>
+      </label>
       <div class="grid-cardinal">
-        <button type="button" [class.active]="ubicacionCanal === 'norte'" (click)="setUbicacionCanal('norte')">Norte</button>
-        <button type="button" [class.active]="ubicacionCanal === 'sur'" (click)="setUbicacionCanal('sur')">Sur</button>
-        <button type="button" [class.active]="ubicacionCanal === 'oeste'" (click)="setUbicacionCanal('oeste')">Oeste</button>
-        <button type="button" [class.active]="ubicacionCanal === 'este'" (click)="setUbicacionCanal('este')">Este</button>
+        <button type="button" [class.active]="ubicacionCanal === 'norte'" (click)="setUbicacionCanal('norte')">Arriba (Norte)</button>
+        <button type="button" [class.active]="ubicacionCanal === 'sur'" (click)="setUbicacionCanal('sur')">Abajo (Sur)</button>
+        <button type="button" [class.active]="ubicacionCanal === 'oeste'" (click)="setUbicacionCanal('oeste')">Izquierda (Oeste)</button>
+        <button type="button" [class.active]="ubicacionCanal === 'este'" (click)="setUbicacionCanal('este')">Derecha (Este)</button>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>Solera b (m)</label>
+        <label>
+          Ancho del Fondo (m)
+          <app-info-tooltip 
+            titulo="Ancho de Solera (b)" 
+            texto="Mide con huincha cuánto mide el piso plano del fondo del canal por donde corre el agua." 
+            ejemplo="0.80 m (80 centímetros)">
+          </app-info-tooltip>
+        </label>
         <input type="number" step="0.05" [(ngModel)]="anchoBase" (input)="emitirCambios()" />
       </div>
+
       <div class="form-group">
-        <label>Tirante y (cm)</label>
+        <label>
+          Altura del Agua (cm)
+          <app-info-tooltip 
+            titulo="Nivel o Tirante (y)" 
+            texto="Cuántos centímetros de profundidad tiene el agua dentro del canal." 
+            ejemplo="40 cm de altura">
+          </app-info-tooltip>
+        </label>
         <input type="number" [(ngModel)]="tiranteCm" (input)="emitirCambios()" />
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>Pendiente S (%)</label>
+        <label>
+          Inclinación (%)
+          <app-info-tooltip 
+            titulo="Pendiente del Canal (S)" 
+            texto="Qué tan inclinado está el terreno. Mientras más bajada tenga, más rápido corre el agua." 
+            ejemplo="0.15% (bajada suave normal)">
+          </app-info-tooltip>
+        </label>
         <input type="number" step="0.01" [(ngModel)]="pendientePorc" (input)="emitirCambios()" />
       </div>
+
       <div class="form-group">
-        <label>Tarifa ($/m³)</label>
+        <label>
+          Precio del Agua ($/m³)
+          <app-info-tooltip 
+            titulo="Tarifa por Metro Cúbico" 
+            texto="Cuánto te cobra la asociación de canalistas por cada mil litros (1 m³) de agua usada." 
+            ejemplo="$22 pesos por m³">
+          </app-info-tooltip>
+        </label>
         <input type="number" [(ngModel)]="tarifaM3CLP" (input)="emitirCambios()" />
       </div>
     </div>
 
     <div class="form-group">
-      <label>Rugosidad (n)</label>
+      <label>
+        Material del Canal
+        <app-info-tooltip 
+          titulo="Tipo de Superficie (Rugosidad)" 
+          texto="El agua corre rápido en cemento liso y se frena si el canal es de tierra con pasto o piedras." 
+          ejemplo="Cemento liso o Tierra limpia">
+        </app-info-tooltip>
+      </label>
       <select [(ngModel)]="rugosidadManning" (change)="emitirCambios()">
-        <option [value]="0.015">Hormigón / Partidor (0.015)</option>
-        <option [value]="0.020">Mampostería Cemento (0.020)</option>
-        <option [value]="0.025">Tierra Limpia (0.025)</option>
-        <option [value]="0.035">Tierra Rústica con Malezas (0.035)</option>
+        <option [value]="0.015">Cemento liso / Hormigón (Corre rápido)</option>
+        <option [value]="0.020">Piedra con cemento / Mampostería</option>
+        <option [value]="0.025">Tierra limpia y pareja (Velocidad media)</option>
+        <option [value]="0.035">Tierra con piedras y maleza (Corre lento)</option>
       </select>
     </div>
 
     <div class="canaletas-actions">
-      <button type="button" class="btn-action" (click)="onAgregarCanaleta()">+ Canaleta</button>
-      <button type="button" class="btn-action" (click)="onConmutarOrientacion()">Rotar Red</button>
+      <button type="button" class="btn-action" (click)="onAgregarCanaleta()">+ Agregar Acequia</button>
+      <button type="button" class="btn-action" (click)="onConmutarOrientacion()">Girar Líneas</button>
     </div>
   </div>
 
-  <!-- BOTÓN DE GUARDADO SIEMPRE VISIBLE EN EL PIE -->
+  <!-- BOTÓN DE GUARDADO -->
   <button type="button" class="btn-save" (click)="onGuardarTurno()" [disabled]="guardando">
     <svg *ngIf="!guardando" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
       <polyline points="17 21 17 13 7 13 7 21"></polyline>
       <polyline points="7 3 7 8 15 8"></polyline>
     </svg>
-    {{ guardando ? 'Guardando…' : 'Registrar Turno' }}
+    {{ guardando ? 'Guardando…' : 'Guardar Turno de Riego' }}
   </button>
 </section>

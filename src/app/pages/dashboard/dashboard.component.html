@@ -1,6 +1,9 @@
 <div class="flumen-app-layout">
-  <!-- SIDEBAR LATERAL ADAPTABLE 100vh -->
-  <aside class="app-sidebar" [class.collapsed]="sidebarColapsada">
+  <!-- FONDO OSCURO MÓVIL AL ABRIR MENÚ -->
+  <div class="mobile-backdrop" *ngIf="sidebarMovilAbierta" (click)="sidebarMovilAbierta = false"></div>
+
+  <!-- SIDEBAR LATERAL ADAPTABLE 100vh / MÓVIL -->
+  <aside class="app-sidebar" [class.collapsed]="sidebarColapsada" [class.mobile-open]="sidebarMovilAbierta">
     <div class="sidebar-header">
       <div class="brand-wrapper">
         <img 
@@ -15,16 +18,19 @@
           <span>Gestión Hídrica</span>
         </div>
       </div>
-      <button type="button" class="btn-toggle-sidebar" (click)="sidebarColapsada = !sidebarColapsada" [title]="sidebarColapsada ? 'Expandir' : 'Colapsar'">
+      <button type="button" class="btn-toggle-sidebar desktop-only" (click)="sidebarColapsada = !sidebarColapsada" [title]="sidebarColapsada ? 'Expandir menú' : 'Colapsar menú'">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline [attr.points]="sidebarColapsada ? '9 18 15 12 9 6' : '15 18 9 12 15 6'"></polyline>
         </svg>
+      </button>
+      <button type="button" class="btn-toggle-sidebar mobile-only" (click)="sidebarMovilAbierta = false" title="Cerrar menú">
+        &times;
       </button>
     </div>
 
     <!-- NAVEGACIÓN PRINCIPAL -->
     <nav class="sidebar-nav">
-      <button type="button" class="nav-item active">
+      <button type="button" class="nav-item active" (click)="sidebarMovilAbierta = false" title="Área de trabajo principal con croquis interactivo y parámetros">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="7" height="7" rx="1"></rect>
           <rect x="14" y="3" width="7" height="7" rx="1"></rect>
@@ -34,7 +40,18 @@
         <span *ngIf="!sidebarColapsada">Croquis & Simulador</span>
       </button>
 
-      <button type="button" class="nav-item" (click)="imprimirComprobanteTurno()">
+      <button type="button" class="nav-item" (click)="abrirModalAgenda(); sidebarMovilAbierta = false" title="Coordinar horarios entre regantes y detectar sobrecarga del canal">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span *ngIf="!sidebarColapsada">Agenda de Reparto</span>
+        <span *ngIf="!sidebarColapsada && analisisConflictosCanal.hayConflicto" class="badge-alert">!</span>
+      </button>
+
+      <button type="button" class="nav-item" (click)="imprimirComprobanteTurno(); sidebarMovilAbierta = false" title="Generar comprobante formal de entrega de agua para el celador">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 6 2 18 2 18 9"></polyline>
           <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -43,7 +60,7 @@
         <span *ngIf="!sidebarColapsada">Orden de Compuerta</span>
       </button>
 
-      <button type="button" class="nav-item" (click)="scrollHaciaHistorial()">
+      <button type="button" class="nav-item" (click)="scrollHaciaHistorial(); sidebarMovilAbierta = false" title="Revisar cálculos y turnos guardados en la nube">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
@@ -53,16 +70,16 @@
         <span *ngIf="!sidebarColapsada && historial.length > 0" class="badge-count">{{ historial.length }}</span>
       </button>
 
-      <button type="button" class="nav-item" (click)="exportarAExcel()">
+      <button type="button" class="nav-item" (click)="exportarAExcel(); sidebarMovilAbierta = false" title="Descargar reporte ejecutivo en Excel con gráficos y métricas">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        <span *ngIf="!sidebarColapsada">Descargar CSV</span>
+        <span *ngIf="!sidebarColapsada">Descargar Excel</span>
       </button>
 
-      <button type="button" class="nav-item" (click)="abrirModalConfig()">
+      <button type="button" class="nav-item" (click)="abrirModalConfig(); sidebarMovilAbierta = false" title="Ajustar perfil, asociación de canalistas y tarifa por m³">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"></circle>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -71,18 +88,16 @@
       </button>
     </nav>
 
-
-    <!-- USUARIO -->
     <!-- PIE DEL SIDEBAR: USUARIO Y CIERRE -->
     <div class="sidebar-footer">
-      <div class="user-chip" *ngIf="!sidebarColapsada" (click)="abrirModalConfig()" title="Editar datos del usuario">
+      <div class="user-chip" *ngIf="!sidebarColapsada" (click)="abrirModalConfig(); sidebarMovilAbierta = false" title="Haz clic para editar tus datos y ocupación">
         <div class="user-avatar">{{ usuario.nombre ? usuario.nombre.charAt(0).toUpperCase() : 'R' }}</div>
         <div class="user-details">
           <strong class="user-name">{{ usuario.nombre }}</strong>
           <span class="user-role">{{ ocupacionEtiqueta }}</span>
         </div>
       </div>
-      <button type="button" class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión">
+      <button type="button" class="btn-logout" (click)="cerrarSesion()" title="Cerrar Sesión de forma segura">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
           <polyline points="16 17 21 12 16 7"></polyline>
@@ -95,8 +110,52 @@
 
   <!-- WORKSPACE PRINCIPAL -->
   <main class="main-workspace">
-    <!-- BARRA SUPERIOR DE KPIS -->
+    <!-- BARRA SUPERIOR SOLO PARA CELULARES -->
+    <div class="mobile-topbar">
+      <button type="button" class="btn-hamburger" (click)="sidebarMovilAbierta = true" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="mobile-brand">
+        <strong>FLUMEN</strong>
+        <span>{{ nombrePredio }}</span>
+      </div>
+      <button type="button" class="btn-mobile-print" (click)="imprimirComprobanteTurno()" title="Imprimir Orden">
+        🖨️
+      </button>
+    </div>
+
+    <!-- CONMUTADOR DE EXPERIENCIA: MODO CAMPO (FÁCIL) VS MODO TÉCNICO -->
+    <div class="experience-mode-bar">
+      <div class="mode-pills">
+        <button 
+          type="button" 
+          class="mode-btn" 
+          [class.active]="modoInterfaz === 'campo'" 
+          (click)="cambiarModoInterfaz('campo')">
+          🌾 Modo Campo (Fácil 3 Pasos)
+        </button>
+        <button 
+          type="button" 
+          class="mode-btn" 
+          [class.active]="modoInterfaz === 'tecnico'" 
+          (click)="cambiarModoInterfaz('tecnico')">
+          🛠️ Modo Técnico & Croquis CAD
+        </button>
+      </div>
+
+      <button type="button" class="btn-report-canal" (click)="abrirModalIncidencia()">
+        🚨 Avisar Problema en Canal
+        <span class="inc-badge" *ngIf="incidenciasReportadas.length > 0">{{ incidenciasReportadas.length }}</span>
+      </button>
+    </div>
+
+    <!-- BARRA SUPERIOR DE KPIS CON TOOLTIPS EXPLICATIVOS -->
     <header class="top-kpi-bar">
+      <!-- KPI 1: TIEMPO RECOMENDADO -->
       <div class="kpi-card">
         <div class="kpi-icon icon-timer">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -105,12 +164,21 @@
           </svg>
         </div>
         <div class="kpi-data">
-          <span class="label">Tiempo Recomendado</span>
+          <div style="display: flex; align-items: center;">
+            <span class="label">Duración del Riego</span>
+            <app-info-tooltip 
+              posicion="bottom"
+              titulo="Tiempo de Apertura de Compuerta" 
+              texto="Horas continuas que debes dejar abierta la compuerta de la acequia matriz para regar todo el predio sin saturar ni secar la tierra."
+              ejemplo="1h 01m continuas de riego">
+            </app-info-tooltip>
+          </div>
           <span class="value text-accent">{{ horasTurno }}h {{ minutosTurno }}m</span>
           <small>{{ tiempoPorCuartelStr }}</small>
         </div>
       </div>
 
+      <!-- KPI 2: CAUDAL EN ACEQUIA -->
       <div class="kpi-card">
         <div class="kpi-icon icon-flow">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -118,12 +186,21 @@
           </svg>
         </div>
         <div class="kpi-data">
-          <span class="label">Caudal en Acequia</span>
+          <div style="display: flex; align-items: center;">
+            <span class="label">Agua que Entra</span>
+            <app-info-tooltip 
+              posicion="bottom"
+              titulo="Aforo Instantáneo (Manning)" 
+              texto="Cantidad de litros de agua por segundo (L/s) que entran por tu canal matriz según su ancho, altura de agua (tirante), pendiente y material."
+              ejemplo="283 L/s equivalen a 0.28 m³ por segundo">
+            </app-info-tooltip>
+          </div>
           <span class="value text-blue">{{ caudalLps }} <small>L/s</small></span>
           <small>{{ caudalM3s }} m³/segundo</small>
         </div>
       </div>
 
+      <!-- KPI 3: VOLUMEN OBJETIVO -->
       <div class="kpi-card">
         <div class="kpi-icon icon-water">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,12 +208,21 @@
           </svg>
         </div>
         <div class="kpi-data">
-          <span class="label">Volumen Objetivo</span>
+          <div style="display: flex; align-items: center;">
+            <span class="label">Agua Total Necesaria</span>
+            <app-info-tooltip 
+              posicion="bottom"
+              titulo="Demanda Total de Agua" 
+              texto="Metros cúbicos (m³) totales de agua que requiere la plantación en toda la superficie del predio para cumplir su necesidad agronómica."
+              ejemplo="1.040 m³ = 1.040.000 litros totales">
+            </app-info-tooltip>
+          </div>
           <span class="value">{{ volumenObjetivoM3 | number }} <small>m³</small></span>
           <small>{{ superficieHa }} Ha ({{ numCuarteles }} cuarteles)</small>
         </div>
       </div>
 
+      <!-- KPI 4: COSTO ESTIMADO -->
       <div class="kpi-card">
         <div class="kpi-icon icon-cost">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
@@ -145,19 +231,257 @@
           </svg>
         </div>
         <div class="kpi-data">
-          <span class="label">Costo Estimado</span>
+          <div style="display: flex; align-items: center;">
+            <span class="label">Valor del Turno</span>
+            <app-info-tooltip 
+              posicion="bottom"
+              titulo="Liquidación Económica del Turno" 
+              texto="Valor monetario en Pesos Chilenos ($ CLP) que corresponde al volumen de agua asignada multiplicado por el precio por m³ configurado."
+              ejemplo="1.040 m³ × $22 CLP = $22.880 CLP">
+            </app-info-tooltip>
+          </div>
           <span class="value">${{ costoTotalCLP | number }}</span>
           <small>${{ tarifaM3CLP }} / m³ agua</small>
         </div>
       </div>
     </header>
 
+    <!-- SEMÁFORO DE DIAGNÓSTICO HIDRÁULICO EN TIEMPO REAL -->
+    <div class="hydraulic-diagnostic-banner" [ngClass]="'status-' + diagnosticoHidraulico.nivel">
+      <div class="diag-icon">
+        <span *ngIf="diagnosticoHidraulico.nivel === 'ok'">✅</span>
+        <span *ngIf="diagnosticoHidraulico.nivel === 'warning'">⚠️</span>
+        <span *ngIf="diagnosticoHidraulico.nivel === 'danger'">🚨</span>
+      </div>
+      <div class="diag-content">
+        <div class="diag-header">
+          <strong>{{ diagnosticoHidraulico.titulo }}</strong>
+          <span class="diag-pill">Velocidad: {{ velocidadAgua }} m/s</span>
+        </div>
+        <p>{{ diagnosticoHidraulico.mensaje }} <em>{{ diagnosticoHidraulico.accionRecomendada }}</em></p>
+      </div>
+    </div>
+
+    <!-- ASESOR METEOROLÓGICO EN TIEMPO REAL (OPEN-METEO) + BOTÓN DE AJUSTE -->
+    <div class="weather-advisor-bar" *ngIf="climaActual">
+      <div class="weather-zone-selector">
+        <span class="weather-badge">🛰️ Clima en Vivo</span>
+        <select [(ngModel)]="zonaClimaSeleccionada" (change)="consultarClimaZona()" aria-label="Seleccionar comuna agrícola">
+          <optgroup *ngFor="let grupo of zonasClimaAgrupadas" [label]="'📍 ' + grupo.provincia">
+            <option *ngFor="let z of grupo.zonas" [value]="z.id">{{ z.nombre }}</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="weather-metrics">
+        <span class="w-item" title="Temperatura actual y máxima esperada hoy">
+          🌡️ <strong>{{ climaActual.temp }}°C</strong> <small>(Máx {{ climaActual.tempMax }}°C)</small>
+        </span>
+        <span class="w-item" title="Humedad relativa del aire">
+          💧 Humedad: <strong>{{ climaActual.humedad }}%</strong>
+        </span>
+        <span class="w-item" title="Evapotranspiración de referencia según estándar FAO-56">
+          ☀️ Evaporación (ETo): <strong>{{ climaActual.et0Hoy }} mm/día</strong>
+        </span>
+        <span class="w-item" title="Lluvia acumulada pronosticada para hoy y mañana">
+          🌧️ Lluvia 48h: <strong>{{ climaActual.lluvia48h }} mm</strong>
+        </span>
+      </div>
+
+      <div class="weather-actions-group">
+        <div class="weather-recommendation" 
+             [class.rain-stop]="climaActual.factorAjusteSugerido === 0"
+             [class.heat-alert]="climaActual.factorAjusteSugerido > 1">
+          <ng-container *ngIf="climaActual.factorAjusteSugerido === 0">
+            🌧️ <strong>Lluvia fuerte:</strong> Postergar riego (ahorro 100%).
+          </ng-container>
+          <ng-container *ngIf="climaActual.factorAjusteSugerido === 0.6">
+            🌦️ <strong>Lluvia moderada:</strong> Reducir duración un 40%.
+          </ng-container>
+          <ng-container *ngIf="climaActual.factorAjusteSugerido > 1">
+            🔥 <strong>Calor extremo:</strong> Sumar +15% de tiempo.
+          </ng-container>
+          <ng-container *ngIf="climaActual.factorAjusteSugerido === 1">
+            ✅ <strong>Clima estable:</strong> Mantener tiempo normal.
+          </ng-container>
+        </div>
+
+        <button 
+          *ngIf="climaActual.factorAjusteSugerido !== 1"
+          type="button" 
+          class="btn-apply-weather"
+          [class.active]="ajusteClimaticoAplicado"
+          (click)="toggleAjusteClimatico()">
+          {{ ajusteClimaticoAplicado ? '✓ Ajuste Aplicado (Quitar)' : 'Aplicar Ajuste al Turno' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- TARJETA DE IMPACTO Y AHORRO HÍDRICO (TRADICIONAL VS FLUMEN) -->
+    <div class="savings-impact-bar">
+      <div class="savings-title">
+        <span class="savings-badge">💧 Eficiencia Hídrica</span>
+        <strong>Ahorro estimado frente a riego tradicional sin aforo:</strong>
+      </div>
+      <div class="savings-metrics">
+        <div class="s-box">
+          <span>Riego Tradicional ("al ojo")</span>
+          <strong class="text-muted-strike">{{ volumenTradicionalM3 | number }} m³</strong>
+        </div>
+        <div class="s-arrow">➔</div>
+        <div class="s-box">
+          <span>Con Flumen (Aforado)</span>
+          <strong class="text-leaf">{{ volumenObjetivoM3 | number }} m³</strong>
+        </div>
+        <div class="s-highlight">
+          <span>Agua Recuperada: <strong>+{{ ahorroTurnoM3 | number }} m³</strong></span>
+          <span>Ahorro Directo: <strong>${{ ahorroTurnoCLP | number }} CLP / turno</strong></span>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="mensajeAlerta" class="alert-toast">
       {{ mensajeAlerta }}
     </div>
 
-    <!-- WORKSPACE SPLIT: INSPECTOR + CROQUIS CAD -->
-    <div class="work-split">
+    <!-- ============================================================
+         VISTA SIMPLIFICADA PARA AGRICULTOR (MODO CAMPO 3 PASOS)
+         ============================================================ -->
+    <section class="field-easy-wizard" *ngIf="modoInterfaz === 'campo'">
+      <!-- PASO 1: ELEGIR CULTIVO CON BOTONES GRANDES -->
+      <div class="wizard-step-card">
+        <div class="step-badge">PASO 1 DE 3</div>
+        <h3>🌱 ¿Qué tienes plantado en este potrero?</h3>
+        <p class="step-help">Toca el dibujo de tu plantación o búscala en la lista:</p>
+
+        <div class="quick-crops-grid">
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'palto'" (click)="seleccionarCultivoRapido('palto')">
+            <span class="tile-emoji">🥑</span>
+            <strong>Palto Hass</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'cerezo'" (click)="seleccionarCultivoRapido('cerezo')">
+            <span class="tile-emoji">🍒</span>
+            <strong>Cerezo</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'nogal'" (click)="seleccionarCultivoRapido('nogal')">
+            <span class="tile-emoji">🌰</span>
+            <strong>Nogal</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'uva_mesa'" (click)="seleccionarCultivoRapido('uva_mesa')">
+            <span class="tile-emoji">🍇</span>
+            <strong>Parronal / Uva</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'tomate'" (click)="seleccionarCultivoRapido('tomate')">
+            <span class="tile-emoji">🍅</span>
+            <strong>Tomate</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'choclo'" (click)="seleccionarCultivoRapido('choclo')">
+            <span class="tile-emoji">🌽</span>
+            <strong>Choclo / Maíz</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'papa'" (click)="seleccionarCultivoRapido('papa')">
+            <span class="tile-emoji">🥔</span>
+            <strong>Papa</strong>
+          </button>
+          <button type="button" class="crop-tile" [class.selected]="cultivoKey === 'lechuga'" (click)="seleccionarCultivoRapido('lechuga')">
+            <span class="tile-emoji">🥬</span>
+            <strong>Hortalizas Hoja</strong>
+          </button>
+        </div>
+
+        <div class="easy-select-row">
+          <label for="easy-crop-select">O elige otro cultivo de la lista completa:</label>
+          <select id="easy-crop-select" [(ngModel)]="cultivoKey" (change)="recalcular()">
+            <option *ngFor="let item of cultivos | keyvalue" [value]="item.key">
+              {{ item.value.icono }} {{ item.value.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PASO 2: TAMAÑO DEL TERRENO EN HECTÁREAS O CUADRAS -->
+      <div class="wizard-step-card">
+        <div class="step-badge">PASO 2 DE 3</div>
+        <h3>📏 ¿De qué porte es el terreno que vas a regar?</h3>
+        <p class="step-help">Puedes elegir en <strong>Hectáreas</strong> o en <strong>Cuadras</strong> chilenas:</p>
+
+        <div class="unit-switcher">
+          <button type="button" [class.active]="unidadSuperficieCampo === 'ha'" (click)="ajustarSuperficieCampo(valorSuperficieCampo, 'ha')">
+            Medir en Hectáreas (Ha)
+          </button>
+          <button type="button" [class.active]="unidadSuperficieCampo === 'cuadras'" (click)="ajustarSuperficieCampo(valorSuperficieCampo, 'cuadras')">
+            Medir en Cuadras (1 cuadra = 1,56 Ha)
+          </button>
+        </div>
+
+        <div class="quick-size-buttons">
+          <button type="button" (click)="ajustarSuperficieCampo(0.5, unidadSuperficieCampo)">
+            ½ {{ unidadSuperficieCampo === 'ha' ? 'Hectárea' : 'Cuadra' }}
+          </button>
+          <button type="button" (click)="ajustarSuperficieCampo(1, unidadSuperficieCampo)">
+            1 {{ unidadSuperficieCampo === 'ha' ? 'Hectárea' : 'Cuadra' }}
+          </button>
+          <button type="button" (click)="ajustarSuperficieCampo(2, unidadSuperficieCampo)">
+            2 {{ unidadSuperficieCampo === 'ha' ? 'Hectáreas' : 'Cuadras' }}
+          </button>
+          <button type="button" (click)="ajustarSuperficieCampo(5, unidadSuperficieCampo)">
+            5 {{ unidadSuperficieCampo === 'ha' ? 'Hectáreas' : 'Cuadras' }}
+          </button>
+        </div>
+
+        <div class="easy-number-input">
+          <label>O escribe la cantidad exacta:</label>
+          <div class="input-with-unit">
+            <input 
+              type="number" 
+              step="0.5" 
+              min="0.1" 
+              [(ngModel)]="valorSuperficieCampo" 
+              (input)="ajustarSuperficieCampo(valorSuperficieCampo, unidadSuperficieCampo)" 
+            />
+            <span>{{ unidadSuperficieCampo === 'ha' ? 'Hectáreas' : 'Cuadras' }} (= {{ superficieHa }} Ha)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3: INSTRUCCIÓN CLARA Y ACCIONES EN UN TOQUE -->
+      <div class="wizard-step-card result-highlight-card">
+        <div class="step-badge badge-green">PASO 3 DE 3 • TU INSTRUCCIÓN DE RIEGO</div>
+        <h3>⏱️ Abre tu compuerta durante:</h3>
+
+        <div class="giant-time-box">
+          <span class="giant-time">{{ horasTurno }} horas y {{ minutosTurno }} minutos</span>
+          <span class="giant-sub">Para regar {{ superficieHa }} Ha de {{ cultivoActual.nombre }} ({{ tiempoPorCuartelStr }})</span>
+        </div>
+
+        <div class="easy-summary-pills">
+          <div class="e-pill">💧 Agua que usarás: <strong>{{ volumenObjetivoM3 | number }} m³</strong></div>
+          <div class="e-pill">💰 Valor estimado: <strong>${{ costoTotalCLP | number }} CLP</strong></div>
+          <div class="e-pill" *ngIf="climaActual">
+            🌤️ Clima hoy: <strong>{{ climaActual.temp }}°C (Lluvia 48h: {{ climaActual.lluvia48h }} mm)</strong>
+          </div>
+        </div>
+
+        <div class="wizard-action-buttons">
+          <button type="button" class="btn-voice-read" (click)="escucharInstruccionVoz()">
+            🔊 Escuchar Instrucción en Voz Alta
+          </button>
+
+          <button type="button" class="btn-whatsapp-send" (click)="enviarOrdenWhatsApp()">
+            📲 Enviar Orden por WhatsApp al Celador
+          </button>
+
+          <button type="button" class="btn-save-easy" (click)="guardarTurnoActual()" [disabled]="guardando">
+            💾 {{ guardando ? 'Guardando...' : 'Guardar este Turno en mi Historial' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         VISTA TÉCNICA COMPLETA: INSPECTOR + CROQUIS CAD
+         ============================================================ -->
+    <div class="work-split" *ngIf="modoInterfaz === 'tecnico'">
       <app-inspector-panel
         [nombrePredio]="nombrePredio"
         [anchoM]="parcelaAnchoM"
@@ -205,7 +529,107 @@
     ></app-turnos-history>
   </main>
 
-  <!-- MODAL DE CONFIGURACIÓN DE USUARIO -->
+  <!-- MODAL DE AGENDA DE REPARTO Y CONTROL DE CAUDAL MÁXIMO -->
+  <div class="modal-overlay" *ngIf="mostrarModalAgenda" (click)="cerrarModalAgenda()">
+    <div class="modal-card modal-agenda" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <h3>Agenda de Reparto & Control de Canal Matriz</h3>
+        </div>
+        <button type="button" class="btn-close" (click)="cerrarModalAgenda()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="agenda-capacity-bar" [class.conflict]="analisisConflictosCanal.hayConflicto">
+          <div class="cap-input">
+            <label>Capacidad Máxima Canal Matriz (L/s):</label>
+            <input type="number" [(ngModel)]="capacidadMaximaCanalLps" min="50" max="5000" />
+          </div>
+          <div class="cap-status">
+            <ng-container *ngIf="analisisConflictosCanal.hayConflicto">
+              🚨 <strong>Sobrecarga detectada ({{ analisisConflictosCanal.picoCaudalLps }} L/s)</strong> en franja {{ analisisConflictosCanal.franjaCritica }}.
+            </ng-container>
+            <ng-container *ngIf="!analisisConflictosCanal.hayConflicto">
+              ✅ <strong>Sin traslapes críticos:</strong> Pico máximo simultáneo de {{ analisisConflictosCanal.picoCaudalLps }} L/s.
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="agenda-add-grid">
+          <input type="text" [(ngModel)]="nuevoBloqueAgenda.predio" placeholder="Nombre Predio / Regante" />
+          <input type="time" [(ngModel)]="nuevoBloqueAgenda.horaInicio" title="Hora de apertura" />
+          <input type="number" [(ngModel)]="nuevoBloqueAgenda.caudalSolicitadoLps" placeholder="L/s" title="Caudal en L/s" />
+          <input type="number" step="0.5" [(ngModel)]="nuevoBloqueAgenda.duracionHoras" placeholder="Horas" title="Duración en horas" />
+          <button type="button" class="btn-add-slot" (click)="agregarBloqueAgenda()">+ Agendar</button>
+        </div>
+
+        <div class="agenda-list">
+          <div class="agenda-item" *ngFor="let t of agendaTurnos">
+            <div class="slot-time">{{ t.horaInicio }} - {{ t.horaFin }}</div>
+            <div class="slot-info">
+              <strong>{{ t.predio }}</strong>
+              <small>Caudal: {{ t.caudalLps }} L/s &bull; Duración: {{ t.duracionHoras }}h</small>
+            </div>
+            <button type="button" class="btn-del-slot" (click)="eliminarBloqueAgenda(t.id)" title="Quitar turno">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-save-config" (click)="cerrarModalAgenda()">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE AVISO DE PROBLEMA EN EL CANAL (CRITERIO CNR) -->
+  <div class="modal-overlay" *ngIf="mostrarModalIncidencia" (click)="cerrarModalIncidencia()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-title">
+          <h3>🚨 Avisar Problema en el Canal</h3>
+        </div>
+        <button type="button" class="btn-close" (click)="cerrarModalIncidencia()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="config-field">
+          <label>¿Qué ocurre en la acequia o compuerta?</label>
+          <select [(ngModel)]="incidenciaCanal.tipo">
+            <option value="compuerta_trancada">🔒 Compuerta trancada o dañada</option>
+            <option value="canal_obstruido">🌿 Canal tapado con ramas, basura o barro</option>
+            <option value="sin_agua">🏜️ Canal viene seco / no llega agua</option>
+            <option value="desborde_rotura">🌊 Desborde o derrumbe de borde</option>
+          </select>
+        </div>
+
+        <div class="config-field">
+          <label>Detalle o ubicación (opcional)</label>
+          <input type="text" [(ngModel)]="incidenciaCanal.descripcion" placeholder="Ej: Puente camino vecinal, marco N° 4" />
+        </div>
+
+        <div class="incidencias-historial" *ngIf="incidenciasReportadas.length > 0">
+          <strong>Últimos avisos enviados hoy:</strong>
+          <div class="inc-item" *ngFor="let inc of incidenciasReportadas">
+            <span>🕒 {{ inc.fecha }} - <strong>{{ inc.tipoEtiqueta }}</strong> ({{ inc.predio }})</span>
+            <small>{{ inc.descripcion }}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="cerrarModalIncidencia()">Cerrar</button>
+        <button type="button" class="btn-save-config" (click)="registrarIncidenciaCanal()">Enviar Aviso al Celador</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIGURACIÓN DE USUARIO CON TOOLTIPS -->
   <div class="modal-overlay" *ngIf="mostrarModalConfig" (click)="cerrarModalConfig()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -221,17 +645,38 @@
 
       <div class="modal-body">
         <div class="config-field">
-          <label>Nombre del Regante / Razón Social</label>
+          <label>
+            Nombre del Regante / Razón Social
+            <app-info-tooltip 
+              titulo="Titular de Derechos de Agua" 
+              texto="Nombre de la persona o sociedad agrícola que aparecerá firmando en la Orden de Compuerta impresa." 
+              ejemplo="Agrícola Santa María Ltda.">
+            </app-info-tooltip>
+          </label>
           <input type="text" [(ngModel)]="usuarioEdit.nombre" placeholder="Nombre completo" />
         </div>
 
         <div class="config-field">
-          <label>Correo Electrónico</label>
+          <label>
+            Correo Electrónico
+            <app-info-tooltip 
+              titulo="Correo de Notificación" 
+              texto="Dirección vinculada a tu cuenta para respaldar y consultar tus registros históricos." 
+              ejemplo="regante@campo.cl">
+            </app-info-tooltip>
+          </label>
           <input type="email" [(ngModel)]="usuarioEdit.correo" placeholder="correo@ejemplo.com" />
         </div>
 
         <div class="config-field">
-          <label>Rol Agrícola / Ocupación</label>
+          <label>
+            Rol Agrícola / Ocupación
+            <app-info-tooltip 
+              titulo="Perfil Operativo" 
+              texto="Define tu responsabilidad dentro de la gestión del canal para rotular los reportes generados." 
+              ejemplo="Agricultor Particular o Celador de Compuerta">
+            </app-info-tooltip>
+          </label>
           <select [(ngModel)]="usuarioEdit.ocupacion">
             <option value="agricultor_particular">Agricultor / Regante Particular</option>
             <option value="profesional_agronomo">Técnico Agrícola / Ingeniero Agrónomo</option>
@@ -241,12 +686,26 @@
         </div>
 
         <div class="config-field">
-          <label>Asociación de Canalistas / Junta de Vigilancia</label>
+          <label>
+            Asociación de Canalistas / Junta de Vigilancia
+            <app-info-tooltip 
+              titulo="Organización de Usuarios de Agua" 
+              texto="Nombre del canal matriz, junta de vigilancia o comunidad de aguas que administra tu turno." 
+              ejemplo="Asociación Canalistas del Maipo">
+            </app-info-tooltip>
+          </label>
           <input type="text" [(ngModel)]="usuarioEdit.asociacion" placeholder="Ej: Canalistas del Maipo / Aconcagua" />
         </div>
 
         <div class="config-field">
-          <label>Tarifa Predeterminada ($ CLP/m³)</label>
+          <label>
+            Tarifa Predeterminada ($ CLP/m³)
+            <app-info-tooltip 
+              titulo="Valor Unitario del Agua" 
+              texto="Costo fijo en pesos chilenos por cada metro cúbico asignado. Se multiplica automáticamente por el volumen de tu turno." 
+              ejemplo="$22 CLP por m³">
+            </app-info-tooltip>
+          </label>
           <input type="number" [(ngModel)]="tarifaM3CLP" (input)="recalcular()" />
         </div>
       </div>
